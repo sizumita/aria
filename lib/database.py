@@ -3,7 +3,7 @@ from collections import namedtuple
 
 import asyncpg
 
-User = namedtuple('User', ('user_id', 'hp', 'mp'))
+User = namedtuple('User', ('id', 'hp', 'mp'))
 
 
 class Database:
