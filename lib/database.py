@@ -3,11 +3,7 @@ from typing import NamedTuple
 
 import asyncpg
 
-
-class User(NamedTuple):
-    id: int
-    hp: int
-    mp: int
+User = NamedTuple('User', [('id', int), ('hp', int), ('mp', int)])
 
 
 class Database:
