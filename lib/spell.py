@@ -1,6 +1,6 @@
 import re
 import datetime
-form_compile = re.compile(r'^change element (sword|spear|bow|wall|rod)')
+form_compile = re.compile(r'^change element (sword|spear|bow|wall|rod)$')
 feature_compile = re.compile(r'^change feature (flame|water|earth|light|umbra)$')
 
 
