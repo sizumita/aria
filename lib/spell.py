@@ -5,12 +5,12 @@ feature_compiled = re.compile(r'^change feature (flame|water|earth|light|umbra)$
 
 
 class Spell:
-    def __init__(self):
+    def __init__(self) -> None:
         self.form = None
         self.feature = None
         self.last_aria_command_time = None
 
-    def receive_command(self, command: str, aria_command_time: datetime.datetime):
+    def receive_command(self, command: str, aria_command_time: datetime.datetime) -> bool:
         """
         コマンドを受け取り、自分のインスタンス変数を変化させ、Trueを返す
         もしコマンドがおかしかった場合、Falseを返す。
@@ -31,7 +31,7 @@ class Spell:
 
         return True
 
-    def can_aria(self, will_aria_time: datetime.datetime):
+    def can_aria(self, will_aria_time: datetime.datetime) -> bool:
         """
         制限時間15.0秒を過ぎていないかチェックする関数
         :param will_aria_time: 次にコマンドを発動する時間
