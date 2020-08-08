@@ -1,24 +1,17 @@
 import asyncio
 import os
 from collections import namedtuple
-from pathlib import Path
 
 import asyncpg
-from dotenv import load_dotenv
 
-env_path = Path('.') / '.env'
-load_dotenv(dotenv_path=env_path)
+User = namedtuple('User', ('user_id', 'hp', 'mp'))
 
 
 class Database:
     """CREATE TABLE users (user_id bigint, hp integer, mp integer, PRIMARY KEY(user_id))"""
     def __init__(self):
-        self.db_url = os.environ.get('DATABASE_URL')
-        if self.db_url is None:
-            raise Exception('DATABASE_URL Not Found.')
+        self.db_url = os.environ['DATABASE_URL']
         self.conn = None
-        asyncio.create_task(self.check_database())
-        asyncio.create_task(self.setup)
 
     async def check_database(self):
         conn = self.conn or await self.setup()
@@ -40,14 +33,16 @@ class Database:
         if data.get('user_id'):
             hp = data.get('hp')
             mp = data.get('mp')
-            User = namedtuple('User', ('user_id', 'hp', 'mp'))
             return User(user_id, hp, mp)
         else:
             return None
 
     async def create_user(self, user_id):
         conn = self.conn or await self.setup()
-        await conn.execute('INSERT INTO users ($1, $2, $3)', user_id, 100, 100)
+        try:
+            await conn.execute('INSERT INTO users ($1, $2, $3)', user_id, 100, 100)
+        except asyncpg.exceptions.UniqueViolationError:
+            pass
         return await self.get_user(user_id)
 
     async def update_user(self, user_id, hp, mp):
