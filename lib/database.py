@@ -1,9 +1,14 @@
 import os
-from collections import namedtuple
+from dataclasses import dataclass
 
 import asyncpg
 
-User = namedtuple('User', ('id', 'hp', 'mp'))
+
+@dataclass
+class User:
+    id: int
+    hp: int
+    mp: int
 
 
 class Database:
