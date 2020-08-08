@@ -37,12 +37,11 @@ class Database:
             return None
 
     async def create_user(self, user_id):
-        conn = self.conn or await self.setup()
-        try:
+        user = await self.get_user(user_id)
+        if user is None:
+            conn = self.conn or await self.setup()
             await conn.execute('INSERT INTO users ($1, $2, $3)', user_id, 100, 100)
-        except asyncpg.exceptions.UniqueViolationError:
-            pass
-        return await self.get_user(user_id)
+        return user
 
     async def update_user(self, user_id, hp, mp):
         conn = self.conn or await self.setup()
