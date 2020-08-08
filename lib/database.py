@@ -1,3 +1,4 @@
+import asyncio
 import os
 from collections import namedtuple
 from pathlib import Path
@@ -10,12 +11,21 @@ load_dotenv(dotenv_path=env_path)
 
 
 class Database:
-    """CREATE TABLE users (user_id bigint, hp integer, mp integer, PRIMRY KEY(user_id))"""
+    """CREATE TABLE users (user_id bigint, hp integer, mp integer, PRIMARY KEY(user_id))"""
     def __init__(self):
         self.db_url = os.environ.get('DATABASE_URL')
         if self.db_url is None:
             raise Exception('DATABASE_URL Not Found.')
         self.conn = None
+        asyncio.create_task(self.check_database())
+        asyncio.create_task(self.setup)
+
+    async def check_database(self):
+        conn = self.conn or await self.setup()
+        try:
+            await conn.execute('select "users"::regclass')
+        except asyncpg.exceptions.UndefinedColumnError:
+            await conn.execute('CREATE TABLE users (user_id bigint, hp integer, mp integer, PRIMARY KEY(user_id))')
 
     async def setup(self):
         self.conn = await asyncpg.connect(self.db_url)
