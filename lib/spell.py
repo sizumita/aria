@@ -1,7 +1,7 @@
 import re
 import datetime
-form_compile = re.compile(r'^change element (sword|spear|bow|wall|rod)$')
-feature_compile = re.compile(r'^change feature (flame|water|earth|light|umbra)$')
+form_compiled = re.compile(r'^change element (sword|spear|bow|wall|rod)$')
+feature_compiled = re.compile(r'^change feature (flame|water|earth|light|umbra)$')
 
 
 class Spell:
@@ -18,10 +18,10 @@ class Spell:
         :param aria_command_time: コマンドを実行した時間
         :return: bool
         """
-        if match := form_compile.match(command):
+        if match := form_compiled.match(command):
             self.form = match.group(0)
 
-        elif match := feature_compile.match(command):
+        elif match := feature_compiled.match(command):
             self.feature = match.group(0)
 
         else:
