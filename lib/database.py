@@ -1,11 +1,10 @@
 import os
-from dataclasses import dataclass
+from typing import NamedTuple
 
 import asyncpg
 
 
-@dataclass
-class User:
+class User(NamedTuple):
     id: int
     hp: int
     mp: int
