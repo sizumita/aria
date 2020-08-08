@@ -10,4 +10,4 @@ bot = Aria()
 
 extensions = []
 
-bot.run(environ.get('BOT_TOKEN'))
+bot.run(environ['BOT_TOKEN'])
