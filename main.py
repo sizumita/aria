@@ -8,7 +8,7 @@ load_dotenv()
 bot = Aria()
 
 extensions = ["manage"]
-for cog in extensions:
-    bot.load_extension(f"cogs.{cog}")
+for extension in extensions:
+    bot.load_extension(f"cogs.{extension}")
 
 bot.run(environ['BOT_TOKEN'])
