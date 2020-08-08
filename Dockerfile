@@ -5,4 +5,6 @@ WORKDIR /bot
 
 ADD . /bot
 
+RUN pip install --trusted-host pypi.python.org -r requirements.txt
+
 CMD ["python", "main.py"]
