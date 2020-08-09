@@ -8,7 +8,7 @@ User = NamedTuple('User', [('id', int), ('hp', int), ('mp', int)])
 
 class Database:
     """CREATE TABLE users (user_id bigint, hp integer, mp integer, PRIMARY KEY(user_id))"""
-<<<<<<< HEAD
+
     def __init__(self, bot: Any):
         self.bot = bot
         self.conn: Union[asyncpg.Connection, None] = None
