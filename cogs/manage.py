@@ -19,26 +19,15 @@ class ManageCog(commands.Cog):
 
     @commands.command()
     async def status(self, ctx, user: discord.User = None):
-        if user is not None:
-            user_data = await self.db.get_user(user.id)
-            if user_data is None:
-                return await ctx.send("このユーザーはまだ登録されていません。")
-
-            msg_text = f"""\
-            {user.mention} さんのステータス
-            HP: {user_data.hp}HP
-            MP: {user_data.mp}MP
-            """
-            return await ctx.send(textwrap.dedent(msg_text))
-
-        user_data = await self.db.get_user(ctx.author.id)
+        target_user = user if user else ctx.author
+        user_data = await self.db.get_user(target_user.id)
         if user_data is None:
-            return await ctx.send("あなたはまだ登録されていません")
+            return await ctx.send("まだ登録されていません")
 
         msg_text = f"""\
-        {ctx.author.mention} さんのステータス
-        HP: {user.hp}HP
-        MP: {user.mp}MP
+        {target_user.mention} さんのステータス
+        HP: {user_data.hp}HP
+        MP: {user_data.mp}MP
         """
         return await ctx.send(textwrap.dedent(msg_text))
 
