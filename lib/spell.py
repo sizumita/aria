@@ -2,6 +2,22 @@ import re
 import datetime
 form_compiled = re.compile(r'^change element (sword|spear|bow|wall|rod)$')
 feature_compiled = re.compile(r'^change feature (flame|water|earth|light|umbra)$')
+form_damages = {
+    'sword': 10,
+    'spear': 20,
+    'bow': 5,
+    'wall': 2,
+    'rod': 15,
+}
+
+# 各属性の強い属性
+strong_features = {
+    'flame': 'earth',
+    'water': 'flame',
+    'earth': 'water',
+    'light': 'umbra',
+    'umbra': 'light',
+}
 
 
 class Spell:
@@ -9,6 +25,17 @@ class Spell:
         self.form = None
         self.feature = None
         self.last_aria_command_time = None
+
+    def calculate_damage(self, enemy_spell) -> int:
+        total_damage = form_damages[self.form]
+
+        # 属性有利不利
+        if strong_features[self.feature] == enemy_spell.feature:
+            total_damage *= 1.2
+        elif strong_features[enemy_spell.feature] == self.feature:
+            total_damage *= 0.8
+
+        return int(total_damage)  # 少数になる可能性もあるため
 
     def receive_command(self, command: str, aria_command_time: datetime.datetime) -> bool:
         """
