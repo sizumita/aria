@@ -1,3 +1,4 @@
+import discord
 from discord.ext import commands
 import textwrap
 
@@ -17,9 +18,21 @@ class ManageCog(commands.Cog):
         # メッセージは要検討
 
     @commands.command()
-    async def status(self, ctx):
-        user = self.db.get_user(ctx.author.id)
-        if user is None:
+    async def status(self, ctx, user: discord.User = None):
+        if user is not None:
+            user_data = await self.db.get_user(user.id)
+            if user_data is None:
+                return await ctx.send("このユーザーはまだ登録されていません。")
+
+            msg_text = f"""\
+            {user.mention} さんのステータス
+            HP: {user_data.hp}HP
+            MP: {user_data.mp}MP
+            """
+            return await ctx.send(textwrap.dedent(msg_text))
+
+        user_data = await self.db.get_user(ctx.author.id)
+        if user_data is None:
             return await ctx.send("あなたはまだ登録されていません")
 
         msg_text = f"""\
