@@ -1,0 +1,24 @@
+version: '3'
+services:
+  postgres:
+    image: postgres
+    environment:
+      env_file: postgres.env
+    ports:
+      - 5432:5432
+    volumes:
+      - pgsql-aria-data:/var/lib/postgresql/data
+      - ./postgres/init:/docker-entrypoint-initdb.d
+    container_name: 'mydb'
+  main:
+    environment:
+      - BOT_TOKEN
+      - PREFIX
+    env_file: postgres.env
+    build:
+      context: .
+      dockerfile: ./docker/python/Dockerfile
+    container_name: 'main'
+
+volumes:
+  pgsql-aria-data:

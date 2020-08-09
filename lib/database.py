@@ -1,15 +1,14 @@
-import os
 from typing import NamedTuple
-
 import asyncpg
+import os
 
 User = NamedTuple('User', [('id', int), ('hp', int), ('mp', int)])
 
 
 class Database:
     """CREATE TABLE users (user_id bigint, hp integer, mp integer, PRIMARY KEY(user_id))"""
-    def __init__(self):
-        self.db_url = os.environ['DATABASE_URL']
+    def __init__(self, bot):
+        self.bot = bot
         self.conn = None
 
     async def check_database(self):
@@ -20,7 +19,14 @@ class Database:
             await conn.execute('CREATE TABLE users (user_id bigint, hp integer, mp integer, PRIMARY KEY(user_id))')
 
     async def setup(self):
-        self.conn = await asyncpg.connect(self.db_url)
+        self.conn = await asyncpg.connect(
+            host='mydb',
+            port=5432,
+            user=os.environ['POSTGRES_USER'],
+            password=os.environ['POSTGRES_PASSWORD'],
+            database=os.environ['POSTGRES_DB'],
+            loop=self.bot.loop,
+        )
         return self.conn
 
     async def close(self):
