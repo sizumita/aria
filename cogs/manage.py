@@ -1,9 +1,9 @@
 from discord.ext import commands
-from bot import Aria
+from typing import Any
 
 
 class ManageCog(commands.Cog):
-    def __init__(self, bot: Aria) -> None:
+    def __init__(self, bot: Any) -> None:
         self.bot = bot
         self.db = bot.db
 
@@ -19,5 +19,5 @@ class ManageCog(commands.Cog):
         # メッセージは要検討
 
 
-def setup(bot: Aria) -> None:
+def setup(bot: Any) -> None:
     bot.add_cog(ManageCog(bot))
