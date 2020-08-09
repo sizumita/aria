@@ -13,6 +13,7 @@ services:
       - ./postgres/init:/docker-entrypoint-initdb.d
     container_name: 'mydb'
   main:
+    env_file: .env
     build:
       context: .
       dockerfile: ./docker/python/Dockerfile
