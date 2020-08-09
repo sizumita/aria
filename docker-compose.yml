@@ -13,6 +13,9 @@ services:
       - ./postgres/init:/docker-entrypoint-initdb.d
     container_name: 'mydb'
   main:
+    environment:
+      - BOT_TOKEN
+      - PREFIX
     env_file: .env
     build:
       context: .
