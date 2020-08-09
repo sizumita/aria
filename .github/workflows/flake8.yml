@@ -30,4 +30,4 @@ jobs:
         flake8 . --count --show-source --statistics --ignore=E501
     - name: run mypy
       run: |
-        mypy .
+        mypy . cogs lib
