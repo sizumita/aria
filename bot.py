@@ -10,4 +10,4 @@ class Aria(commands.Bot):
         self.db = Database()
     
     async def on_ready(self):
-        await client.change_presence(activity=discord.Game(name='Aria - War of incantation'))
+        await self.change_presence(activity=discord.Game(name='Aria - War of incantation'))
