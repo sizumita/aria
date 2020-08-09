@@ -34,7 +34,7 @@ class ManageCog(commands.Cog):
         MP: {user_data.mp}MP
         """
         await ctx.send(textwrap.dedent(msg_text))
-        return 
+        return
 
 
 def setup(bot: Any) -> None:
