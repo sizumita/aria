@@ -21,18 +21,20 @@ class ManageCog(commands.Cog):
         # メッセージは要検討
 
     @commands.command()
-    async def status(self, ctx, user: discord.User = None) -> None:
+    async def status(self, ctx: commands.Context, user: discord.User = None) -> None:
         target_user = user if user else ctx.author
         user_data = await self.db.get_user(target_user.id)
         if user_data is None:
-            return await ctx.send("まだ登録されていません")
+            await ctx.send("まだ登録されていません")
+            return
 
         msg_text = f"""\
         {target_user.mention} さんのステータス
         HP: {user_data.hp}HP
         MP: {user_data.mp}MP
         """
-        return await ctx.send(textwrap.dedent(msg_text))
+        await ctx.send(textwrap.dedent(msg_text))
+        return 
 
 
 def setup(bot: Any) -> None:
