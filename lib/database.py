@@ -8,7 +8,8 @@ User = NamedTuple('User', [('id', int), ('hp', int), ('mp', int)])
 
 class Database:
     """CREATE TABLE users (user_id bigint, hp integer, mp integer, PRIMARY KEY(user_id))"""
-    def __init__(self):
+    def __init__(self, bot):
+        self.bot = bot
         self.db_url = os.environ['DATABASE_URL']
         self.conn = None
 
@@ -20,7 +21,14 @@ class Database:
             await conn.execute('CREATE TABLE users (user_id bigint, hp integer, mp integer, PRIMARY KEY(user_id))')
 
     async def setup(self):
-        self.conn = await asyncpg.connect(self.db_url)
+        self.conn = await asyncpg.connect(
+            host='mydb',
+            port=os.environ['PORT'],
+            user=os.environ['POSTGRES_USER'],
+            password=os.environ['POSTGRES_PASSWORD'],
+            database=os.environ['POSTGRES_DB'],
+            loop=self.bot.loop,
+        )
         return self.conn
 
     async def close(self):
