@@ -1,5 +1,6 @@
 import discord
 from discord.ext import commands
+from bot import Aria
 import textwrap
 
 
