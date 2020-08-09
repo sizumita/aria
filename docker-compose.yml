@@ -8,13 +8,13 @@ services:
   postgres:
     image: postgres
     environment:
-      POSTGRES_USER: postgres # user
-      POSTGRES_PASSWORD: postgres # pass
+      POSTGRES_USER: $POSTGRES_USER # user
+      POSTGRES_PASSWORD: $POSTGRES_PASSWORD # pass
     ports:
-      - "5432:5432"
+      - $PORT:$PORT
     volumes:
        - pgsql-data:/var/lib/postgresql/data
-    container_name: db_postgres
+    container_name: 'postgres'
 
 volumes:
   pgsql-data:
