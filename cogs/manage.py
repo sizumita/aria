@@ -3,6 +3,7 @@ from discord.ext import commands
 from bot import Aria
 import textwrap
 
+
 class ManageCog(commands.Cog):
     def __init__(self, bot: Aria) -> None:
         self.bot = bot
@@ -20,7 +21,7 @@ class ManageCog(commands.Cog):
         # メッセージは要検討
 
     @commands.command()
-    async def status(self, ctx, user: discord.User = None):
+    async def status(self, ctx, user: discord.User = None) -> None:
         target_user = user if user else ctx.author
         user_data = await self.db.get_user(target_user.id)
         if user_data is None:
