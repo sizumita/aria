@@ -1,15 +1,15 @@
 from typing import NamedTuple
-from typing import Union
+from typing import Union, Any
 import asyncpg
 import os
-from bot import Aria
 
 User = NamedTuple('User', [('id', int), ('hp', int), ('mp', int)])
 
 
 class Database:
     """CREATE TABLE users (user_id bigint, hp integer, mp integer, PRIMARY KEY(user_id))"""
-    def __init__(self, bot: Aria):
+
+    def __init__(self, bot: Any):
         self.bot = bot
         self.conn: Union[asyncpg.Connection, None] = None
 
