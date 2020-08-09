@@ -1,6 +1,6 @@
 from typing import NamedTuple
-
 import asyncpg
+import os
 
 User = NamedTuple('User', [('id', int), ('hp', int), ('mp', int)])
 
@@ -22,9 +22,9 @@ class Database:
         self.conn = await asyncpg.connect(
             host='mydb',
             port=5432,
-            user='postgres',
-            password='postgres',
-            database='aria',
+            user=os.environ['POSTGRES_USER'],
+            password=os.environ['POSTGRES_PASSWORD'],
+            database=os.environ['POSTGRES_DB'],
             loop=self.bot.loop,
         )
         return self.conn
