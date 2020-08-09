@@ -20,8 +20,8 @@ class ManageCog(commands.Cog):
     async def status(self, ctx):
         user = self.db.get_user(ctx.author.id)
         if user is None:
-            return ctx.send("あなたはまだ登録されていません")
-        
+            return await ctx.send("あなたはまだ登録されていません")
+
         msg_text = f"""\
         {ctx.author.mention} さんのステータス
         HP: {user.hp}HP
