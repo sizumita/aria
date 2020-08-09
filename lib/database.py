@@ -28,17 +28,16 @@ class Database:
 
     async def get_user(self, user_id):
         conn = self.conn or await self.setup()
-        data = await conn.fetch('SELECT hp mp FROM users WHERE user_id=$1', user_id)
-        if data.get('user_id'):
-            hp = data.get('hp')
-            mp = data.get('mp')
-            return User(user_id, hp, mp)
-        else:
+        data = await conn.fetch('SELECT * FROM users WHERE user_id=$1', user_id)
+        if not data:
             return None
+
+        target = list(data[0])
+        return User(target[0], target[1], target[2])
 
     async def create_user(self, user_id):
         conn = self.conn or await self.setup()
-        await conn.execute('INSERT INTO users ($1, $2, $3)', user_id, 100, 100)
+        await conn.execute('INSERT INTO users (user_id, hp, mp) VALUES ($1, $2, $3)', user_id, 100, 100)
         return await self.get_user(user_id)
 
     async def update_user(self, user_id, hp, mp):
