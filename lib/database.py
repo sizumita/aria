@@ -2,13 +2,14 @@ from typing import NamedTuple
 from typing import Union
 import asyncpg
 import os
+from bot import Aria
 
 User = NamedTuple('User', [('id', int), ('hp', int), ('mp', int)])
 
 
 class Database:
     """CREATE TABLE users (user_id bigint, hp integer, mp integer, PRIMARY KEY(user_id))"""
-    def __init__(self, bot):
+    def __init__(self, bot: Aria):
         self.bot = bot
         self.conn: Union[asyncpg.Connection, None] = None
 
@@ -19,7 +20,7 @@ class Database:
         except asyncpg.exceptions.UndefinedColumnError:
             await conn.execute('CREATE TABLE users (user_id bigint, hp integer, mp integer, PRIMARY KEY(user_id))')
 
-    async def setup(self):
+    async def setup(self) -> asyncpg.Connection:
         self.conn = await asyncpg.connect(
             host='mydb',
             port=5432,
