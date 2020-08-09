@@ -20,7 +20,7 @@ class Database:
 
     async def setup(self):
         self.conn = await asyncpg.connect(
-            host='postgres',
+            host='mydb',
             port=5432,
             user=os.environ['POSTGRES_USER'],
             password=os.environ['POSTGRES_PASSWORD'],
