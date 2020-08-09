@@ -7,7 +7,7 @@ services:
       - POSTGRES_PASSWORD
       - POSTGRES_DB
     ports:
-      - $PORT:$PORT
+      - 5432:5432
     volumes:
       - pgsql-aria-data:/var/lib/postgresql/data
       - ./postgres/init:/docker-entrypoint-initdb.d

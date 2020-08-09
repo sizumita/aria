@@ -23,7 +23,7 @@ class Database:
     async def setup(self):
         self.conn = await asyncpg.connect(
             host='mydb',
-            port=os.environ['PORT'],
+            port=5432,
             user=os.environ['POSTGRES_USER'],
             password=os.environ['POSTGRES_PASSWORD'],
             database=os.environ['POSTGRES_DB'],
