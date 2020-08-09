@@ -2,6 +2,8 @@ import discord
 from discord.ext import commands
 import textwrap
 from typing import Any
+from lib.game import Game
+import discord
 
 
 class ManageCog(commands.Cog):
