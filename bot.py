@@ -8,7 +8,7 @@ class Aria(commands.Bot):
     def __init__(self) -> None:
         super().__init__(command_prefix=commands.when_mentioned_or(
             environ.get('PREFIX', 'aria ')))
-        self.db = Database()
+        self.db = Database(self)
 
     async def on_ready(self) -> None:
         status = discord.Game("Aria - War of incantation")
