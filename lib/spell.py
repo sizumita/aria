@@ -1,13 +1,16 @@
 import re
 import datetime
+from typing import NamedTuple
 form_compiled = re.compile(r'^change element (sword|spear|bow|wall|rod)$')
 feature_compiled = re.compile(r'^change feature (flame|water|earth|light|umbra)$')
-form_damages = {
-    'sword': 10,
-    'spear': 20,
-    'bow': 5,
-    'wall': 2,
-    'rod': 15,
+
+Form = NamedTuple('Form', (('damage', int), ('defence', int)))
+forms = {
+    'sword': Form(10, 20),
+    'spear': Form(20, 10),
+    'bow': Form(5, 5),
+    'wall': Form(2, 30),
+    'rod': (15, 15),
 }
 
 # 各属性の強い属性
@@ -27,7 +30,7 @@ class Spell:
         self.last_aria_command_time = None
 
     def calculate_damage(self, enemy_spell) -> int:
-        total_damage = form_damages[self.form]
+        total_damage = forms[self.form].damage
 
         # 属性有利不利
         if strong_features[self.feature] == enemy_spell.feature:
@@ -36,6 +39,17 @@ class Spell:
             total_damage *= 0.8
 
         return int(total_damage)  # 少数になる可能性もあるため
+
+    def calculate_defence(self, enemy_spell) -> int:
+        total_defence = forms[self.form].defence
+
+        # 属性有利不利
+        if strong_features[self.feature] == enemy_spell.feature:
+            total_defence *= 1.2
+        elif strong_features[enemy_spell.feature] == self.feature:
+            total_defence *= 0.8
+
+        return int(total_defence)  # 少数になる可能性もあるため
 
     def receive_command(self, command: str, aria_command_time: datetime.datetime) -> bool:
         """
