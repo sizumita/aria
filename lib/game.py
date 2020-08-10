@@ -1,11 +1,11 @@
 from discord.ext import commands
 import discord
-from typing import Any, Callable, Union
+from typing import Any, Callable, Optional
 from lib.spell import Spell
 from asyncio import Task, Event, sleep
 
 
-def _calc_damage(my_spell: Union[None, Spell], enemy_spell: Union[None, Spell]) -> int:
+def _calc_damage(my_spell: Optional[Spell], enemy_spell: Optional[Spell]) -> int:
     if my_spell is None:
         return 0
     if enemy_spell is None:
@@ -27,10 +27,10 @@ class Game:
         self.channel = ctx.channel
         self.guild = ctx.guild
         self.finish = False
-        self.alpha_spell: Union[None, Spell] = None
-        self.beta_spell: Union[None, Spell] = None
-        self.alpha_loop: Union[None, Task] = None
-        self.beta_loop: Union[None, Task] = None
+        self.alpha_spell: Optional[Spell] = None
+        self.beta_spell: Optional[Spell] = None
+        self.alpha_loop: Optional[Task] = None
+        self.beta_loop: Optional[Task] = None
         self.alpha_hp = 100
         self.beta_hp = 100
         self.alpha_mp = 100
@@ -44,7 +44,7 @@ class Game:
     def beta_check(self, message: discord.Message) -> bool:
         return message.channel.id == self.channel.id and message.author.id == self.beta.id
 
-    async def recv_command(self, check: Callable, user: str) -> Union[Spell, None]:
+    async def recv_command(self, check: Callable, user: str) -> Optional[Spell]:
         spell = Spell()
         while not self.bot.is_closed() and not self.finish:
             message: discord.Message = await self.bot.wait_for('message', check=check, timeout=60)
