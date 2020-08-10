@@ -26,12 +26,10 @@ class Game:
         self.battle_finish_flag = Event(loop=self.bot.loop)
 
     def alpha_check(self, message: discord.Message) -> bool:
-        return message.channel.id == self.channel.id \
-               and message.author.id == self.alpha.id
+        return message.channel.id == self.channel.id and message.author.id == self.alpha.id
 
     def beta_check(self, message: discord.Message) -> bool:
-        return message.channel.id == self.channel.id \
-               and message.author.id == self.beta.id
+        return message.channel.id == self.channel.id and message.author.id == self.beta.id
 
     async def recv_command(self, check: Callable, user: str) -> Union[Spell, None]:
         spell = Spell()
