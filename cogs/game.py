@@ -36,8 +36,10 @@ class Game(commands.Cog):
             await confirm_msg.add_reaction(reaction)
 
         def check(reaction: discord.Reaction, user: discord.User):
-            if not str(reaction.emoji) in REACTIONS: return
-            if not user == target_user: return
+            if not str(reaction.emoji) in REACTIONS:
+                return
+            if not user == target_user:
+                return
             return True
 
         try:
