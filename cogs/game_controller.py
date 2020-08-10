@@ -34,13 +34,13 @@ class Game(commands.Cog):
         拒否する場合は :-1:
         """
         confirm_msg: discord.Message = await ctx.send(textwrap.dedent(msg_text))
-        for reaction in REACTIONS:
-            await confirm_msg.add_reaction(reaction)
+        for reaction_emoji in REACTIONS:
+            await confirm_msg.add_reaction(reaction_emoji)
 
-        def check(reaction: discord.Reaction, member: discord.Member) -> bool:
-            if not reaction.message == confirm_msg:
+        def check(check_reaction: discord.Reaction, member: discord.Member) -> bool:
+            if not check_reaction.message == confirm_msg:
                 return False
-            if not str(reaction.emoji) in REACTIONS:
+            if not str(check_reaction.emoji) in REACTIONS:
                 return False
             if not member == target_member:
                 return False
