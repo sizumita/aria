@@ -5,6 +5,19 @@ from lib.spell import Spell
 from asyncio import Task, Event, sleep
 
 
+def _calc_damage(my_spell: Union[None, Spell], enemy_spell: Union[None, Spell]) -> int:
+    if my_spell is None:
+        return 0
+    if enemy_spell is None:
+        return my_spell.calculate_damage(enemy_spell)
+
+    damage = my_spell.calculate_damage(enemy_spell) - enemy_spell.calculate_defence(my_spell)
+    if damage < 0:
+        return 0
+
+    return damage
+
+
 class Game:
     def __init__(self, bot: Any, alpha: discord.Member, beta: discord.Member, ctx: commands.Context) -> None:
         self.bot = bot
@@ -59,29 +72,8 @@ class Game:
         self.ready_to_raise = True
         await sleep(5)
 
-        alpha_to_beta_damage: int
-        beta_to_alpha_damage: int
-
-        if self.alpha_spell is None:
-            alpha_to_beta_damage = 0
-            beta_to_alpha_damage = self.beta_spell.calculate_damage(self.alpha_spell) \
-                if self.beta_spell is not None else 0
-
-        elif self.beta_spell is None:
-            alpha_to_beta_damage = self.alpha_spell.calculate_damage(self.beta_spell)\
-                if self.alpha_spell is not None else 0
-            beta_to_alpha_damage = 0
-
-        else:
-            alpha_to_beta_damage = \
-                self.alpha_spell.calculate_damage(self.beta_spell) \
-                - self.beta_spell.calculate_defence(self.alpha_spell)
-            beta_to_alpha_damage = \
-                self.beta_spell.calculate_damage(self.alpha_spell) \
-                - self.alpha_spell.calculate_defence(self.beta_spell)
-
-        alpha_to_beta_damage = alpha_to_beta_damage if alpha_to_beta_damage >= 0 else 0
-        beta_to_alpha_damage = beta_to_alpha_damage if beta_to_alpha_damage >= 0 else 0
+        alpha_to_beta_damage = _calc_damage(self.alpha_spell, self.beta_spell)
+        beta_to_alpha_damage = _calc_damage(self.beta_spell, self.alpha_spell)
 
         await self.ctx.send(f'{self.alpha.mention} から {self.beta.mention} に {alpha_to_beta_damage} ダメージ！')
         await self.ctx.send(f'{self.beta.mention} から {self.alpha.mention} に {beta_to_alpha_damage} ダメージ！')
