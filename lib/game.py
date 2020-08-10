@@ -1,8 +1,11 @@
 import discord
-from typing import Any, Callable, Optional, NamedTuple
+from typing import Callable, Optional, NamedTuple, TYPE_CHECKING
 from lib.spell import Spell
 from asyncio import Task, Event, sleep, iscoroutinefunction
 import datetime
+
+if TYPE_CHECKING:
+    from bot import Aria # noqa
 
 
 Message = NamedTuple('Message', (('content', str), ('created_at', datetime.datetime)))
@@ -23,7 +26,7 @@ def _calc_damage(my_spell: Optional[Spell], enemy_spell: Optional[Spell]) -> int
 
 class Game:
     def __init__(self,
-                 bot: Any,
+                 bot: Aria,
                  alpha: discord.Member,
                  beta: discord.Member,
                  channel: discord.TextChannel,
@@ -46,13 +49,13 @@ class Game:
         self.send_callable = send_callable
         self.battle_finish_flag = Event(loop=self.bot.loop)
 
-    async def send(self, *args, **kwargs) -> None: # type: ignore
+    async def send(self, *args, **kwargs) -> None:  # type: ignore
         if iscoroutinefunction(self.send_callable):
             await self.send_callable(*args, **kwargs)
         else:
             self.send_callable(*args, **kwargs)
 
-    async def wait_for(self, *args, **kwargs) -> Message: # type: ignore
+    async def wait_for(self, *args, **kwargs) -> Message:  # type: ignore
         content = input()
         return Message(content, datetime.datetime.now())
 
