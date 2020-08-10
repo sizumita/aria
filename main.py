@@ -3,7 +3,7 @@ from os import environ
 
 bot = Aria()
 
-extensions = ["cogs.manage"]
+extensions = ["cogs.manage", "cogs.game"]
 for extension in extensions:
     bot.load_extension(extension)
 
