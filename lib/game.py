@@ -1,7 +1,11 @@
 import discord
-from typing import Any, Callable, Optional
+from typing import Any, Callable, Optional, NamedTuple
 from lib.spell import Spell
 from asyncio import Task, Event, sleep, iscoroutinefunction
+import datetime
+
+
+Message = NamedTuple('Message', (('content', str), ('created_at', datetime.datetime)))
 
 
 def _calc_damage(my_spell: Optional[Spell], enemy_spell: Optional[Spell]) -> int:
@@ -48,6 +52,10 @@ class Game:
         else:
             self.send_callable(*args, **kwargs)
 
+    async def wait_for(self, *args, **kwargs):
+        content = input()
+        return Message(content, datetime.datetime.now())
+
     def alpha_check(self, message: discord.Message) -> bool:
         return message.channel.id == self.channel.id and message.author.id == self.alpha.id
 
@@ -57,7 +65,7 @@ class Game:
     async def recv_command(self, check: Callable, user: str) -> Optional[Spell]:
         spell = Spell()
         while not self.bot.is_closed() and not self.finish:
-            message: discord.Message = await self.bot.wait_for('message', check=check, timeout=60)
+            message = await self.wait_for('message', check=check, timeout=60)
             if message.content == 'execute':
                 if not self.use_mp(user, 5):
                     await self.send('MPが枯渇しました。')
@@ -108,8 +116,10 @@ class Game:
                 f'{self.alpha.mention}\n HP: {self.alpha_hp}\n MP: {self.alpha_mp}',
                 allowed_mentions=discord.AllowedMentions(users=False)
             )
-            await self.send(f'{self.beta.mention}\n HP: {self.beta_hp}\n MP: {self.beta_mp}',
-                            allowed_mentions=discord.AllowedMentions(users=False))
+            await self.send(
+                f'{self.beta.mention}\n HP: {self.beta_hp}\n MP: {self.beta_mp}',
+                allowed_mentions=discord.AllowedMentions(users=False)
+            )
 
         self.battle_finish_flag.set()
         self.battle_finish_flag.clear()
@@ -134,11 +144,11 @@ class Game:
     async def loop(self, check: Callable, user: str) -> None:
 
         while not self.bot.is_closed() and not self.finish:
-            message = await self.bot.wait_for('message', check=check, timeout=60)
+            message = await self.wait_for('message', check=check, timeout=60)
             if message.content != 'aria command':
                 continue
             await self.send('魔法の発動を開始します。')
-            message = await self.bot.wait_for('message', check=check, timeout=60)
+            message = await self.wait_for('message', check=check, timeout=60)
 
             if message.content != 'generate element':
                 await self.send('魔法の発動に失敗しました。')
@@ -174,3 +184,9 @@ class Game:
         await self.send('ゲームスタート！')
         self.bot.loop.create_task(self.loop(self.alpha_check, 'alpha'))
         self.bot.loop.create_task(self.loop(self.beta_check, 'beta'))
+
+
+class DiscordGame(Game):
+    async def wait_for(self, *args, **kwargs):
+        message = await self.bot.wait_for(*args, **kwargs)
+        return Message(message.content, message.created_at)
