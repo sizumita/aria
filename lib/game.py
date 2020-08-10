@@ -69,6 +69,9 @@ class Game:
         return spell
 
     async def raise_spell(self) -> None:
+        if self.finish:
+            return
+
         self.ready_to_raise = True
         await sleep(5)
 
@@ -106,11 +109,13 @@ class Game:
         if user == 'alpha':
             self.alpha_mp -= mp
             if self.alpha_mp < 0:
+                self.alpha_mp = 0
                 return False
             return True
         else:
             self.beta_mp -= mp
             if self.beta_mp < 0:
+                self.beta_mp = 0
                 return False
             return True
 
@@ -122,9 +127,11 @@ class Game:
                 continue
             await self.ctx.send('魔法の発動を開始します。')
             message = await self.bot.wait_for('message', check=check, timeout=60)
+
             if message.content != 'generate element':
                 await self.ctx.send('魔法の発動に失敗しました。')
                 continue
+
             if not self.use_mp(user):
                 await self.ctx.send('MPが枯渇しました。')
                 return
