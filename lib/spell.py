@@ -15,7 +15,7 @@ class Form(NamedTuple):
 forms = {
     'sword': Form(10, 20),
     'spear': Form(20, 10),
-    'bow': Form(2, 2),
+    'bow': Form(5, 5),
     'wall': Form(2, 30),
     'rod': Form(15, 15),
 }
@@ -98,7 +98,7 @@ class Spell:
             self.last_aria_command_time = aria_command_time
 
             if self.form == 'bow':
-                return 3 * self.copy
+                return 5 * self.copy
             return int(2.7 ** self.copy)
 
         else:
