@@ -17,18 +17,18 @@ class Game(commands.Cog):
 
     @commands.command()
     @commands.cooldown(1, 30)
-    async def apply(self, ctx: commands.Context, target_user: discord.User) -> None:
+    async def apply(self, ctx: commands.Context, target_member: discord.Member) -> None:
         author_data = await self.db.get_user(ctx.author.id)
         if author_data is None:
             await ctx.send("あなたはユーザー登録されていません。")
             return
-        target_user_data = await self.db.get_user(target_user.id)
-        if target_user_data is None:
+        target_member_data = await self.db.get_user(target_member.id)
+        if target_member_data is None:
             await ctx.send("対戦申し込み先のユーザーがユーザー登録されていません。")
             return
 
         msg_text = f"""\
-        {target_user.mention}
+        {target_member.mention}
         {ctx.author.mention} に対決を申し込まれました。
         受ける場合は :+1:
         拒否する場合は :-1:
@@ -38,9 +38,11 @@ class Game(commands.Cog):
             await confirm_msg.add_reaction(reaction)
 
         def check(reaction: discord.Reaction, member: discord.Member) -> bool:
+            if not reaction.message == confirm_msg:
+                return False
             if not str(reaction.emoji) in REACTIONS:
                 return False
-            if not member == target_user:
+            if not member == target_member:
                 return False
             return True
 
@@ -55,7 +57,7 @@ class Game(commands.Cog):
             return
 
         await ctx.send("対戦が受けられました。ゲームを開始しています...")
-        game = DiscordGame(self.bot, ctx.author, target_user, ctx.channel, ctx.send)
+        game = DiscordGame(self.bot, ctx.author, target_member, ctx.channel, ctx.send)
         await game.start()
 
     @apply.error
