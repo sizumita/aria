@@ -46,13 +46,13 @@ class Game:
         self.send_callable = send_callable
         self.battle_finish_flag = Event(loop=self.bot.loop)
 
-    async def send(self, *args, **kwargs) -> None:
+    async def send(self, *args, **kwargs) -> None: # type: ignore
         if iscoroutinefunction(self.send_callable):
             await self.send_callable(*args, **kwargs)
         else:
             self.send_callable(*args, **kwargs)
 
-    async def wait_for(self, *args, **kwargs):
+    async def wait_for(self, *args, **kwargs) -> Message: # type: ignore
         content = input()
         return Message(content, datetime.datetime.now())
 
@@ -187,6 +187,6 @@ class Game:
 
 
 class DiscordGame(Game):
-    async def wait_for(self, *args, **kwargs):
+    async def wait_for(self, *args, **kwargs) -> Message:  # type: ignore
         message = await self.bot.wait_for(*args, **kwargs)
         return Message(message.content, message.created_at)
