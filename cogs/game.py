@@ -50,7 +50,7 @@ class Game(commands.Cog):
         if str(reaction.emoji) == REACTION_NO:
             return await ctx.send("拒否リアクションが押されたため対戦はキャンセルされました。")
 
-        await ctx.send("対戦が受けられました。ゲームを開始していませす...")
+        await ctx.send("対戦が受けられました。ゲームを開始しています...")
         game = DiscordGame(self.bot, ctx.author, target_user, ctx.channel, ctx.send)
         await game.start()
 
