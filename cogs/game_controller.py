@@ -47,6 +47,7 @@ class Game(commands.Cog):
             return True
 
         try:
+            reaction: discord.Reaction
             reaction, _ = await self.bot.wait_for("reaction_add", check=check, timeout=60.0)
         except asyncio.TimeoutError:
             await ctx.send("60秒以内にリアクションされなかったため対戦はキャンセルされました。")
