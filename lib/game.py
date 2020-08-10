@@ -57,17 +57,23 @@ class Game:
 
         return spell
 
-    async def raise_spell(self):
+    async def raise_spell(self) -> None:
         self.ready_to_raise = True
         await sleep(5)
+
         alpha_to_beta_damage: int
         beta_to_alpha_damage: int
+
         if self.alpha_spell is None:
             alpha_to_beta_damage = 0
-            beta_to_alpha_damage = self.beta_spell.calculate_damage(self.alpha_spell)
+            beta_to_alpha_damage = self.beta_spell.calculate_damage(self.alpha_spell) \
+                if self.beta_spell is not None else 0
+
         elif self.beta_spell is None:
-            alpha_to_beta_damage = self.alpha_spell.calculate_damage(self.beta_spell)
+            alpha_to_beta_damage = self.alpha_spell.calculate_damage(self.beta_spell)\
+                if self.alpha_spell is not None else 0
             beta_to_alpha_damage = 0
+
         else:
             alpha_to_beta_damage = \
                 self.alpha_spell.calculate_damage(self.beta_spell) \
@@ -75,12 +81,16 @@ class Game:
             beta_to_alpha_damage = \
                 self.beta_spell.calculate_damage(self.alpha_spell) \
                 - self.alpha_spell.calculate_defence(self.beta_spell)
+
         alpha_to_beta_damage = alpha_to_beta_damage if alpha_to_beta_damage >= 0 else 0
         beta_to_alpha_damage = beta_to_alpha_damage if beta_to_alpha_damage >= 0 else 0
+
         await self.ctx.send(f'{self.alpha.mention} から {self.beta.mention} に {alpha_to_beta_damage} ダメージ！')
         await self.ctx.send(f'{self.beta.mention} から {self.alpha.mention} に {beta_to_alpha_damage} ダメージ！')
+
         self.alpha_hp -= beta_to_alpha_damage
         self.beta_hp -= alpha_to_beta_damage
+
         if self.alpha_hp <= 0 and self.beta_hp <= 0:
             await self.ctx.send('相打ち！両者HPが0になったため、相打ちとなります。')
             self.finish = True
@@ -95,6 +105,7 @@ class Game:
                                 allowed_mentions=discord.AllowedMentions(users=False))
             await self.ctx.send(f'{self.beta.mention}\n HP: {self.beta_hp}\n MP: {self.beta_mp}',
                                 allowed_mentions=discord.AllowedMentions(users=False))
+
         self.battle_finish_flag.set()
         self.battle_finish_flag.clear()
         self.alpha_spell = None
