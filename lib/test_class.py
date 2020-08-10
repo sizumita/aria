@@ -18,4 +18,3 @@ class TestMember:
 @dataclass
 class TestChannel:
     id: int = 111111111111111111
-
