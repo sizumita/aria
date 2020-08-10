@@ -54,6 +54,15 @@ class Game(commands.Cog):
         game = DiscordGame(self.bot, ctx.author, target_user, ctx.channel, ctx.send)
         await game.start()
 
+    @apply.error
+    async def apply_error(self, ctx, err):
+        if isinstance(err, commands.CommandOnCooldown):
+            return await ctx.send("再申し込みするには30秒間のクールダウンが必要です。")
+        elif isinstance(err, commands.MissingRequiredArgument):
+            return await ctx.send("引数に対戦申し込みしたいユーザーのメンションを入れて実行してください。")
+
+        await self.bot.on_command_error(ctx, err)
+
 
 def setup(bot):
     bot.add_cog(Game(bot))
