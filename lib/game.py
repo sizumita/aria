@@ -1,6 +1,7 @@
 import discord
-from typing import Callable, Optional, NamedTuple, TYPE_CHECKING
+from typing import Callable, Optional, NamedTuple, TYPE_CHECKING, Union
 from lib.spell import Spell
+from lib.test_class import TestBot, TestMember, TestChannel
 from asyncio import Task, Event, sleep, iscoroutinefunction
 import datetime
 
@@ -24,13 +25,17 @@ def _calc_damage(my_spell: Optional[Spell], enemy_spell: Optional[Spell]) -> int
     return damage
 
 
+def _print(*args, **kwargs) -> None:  # type: ignore
+    print(args, kwargs)
+
+
 class Game:
     def __init__(self,
-                 bot: 'Aria',
-                 alpha: discord.Member,
-                 beta: discord.Member,
-                 channel: discord.TextChannel,
-                 send_callable: Callable = print,
+                 bot: 'Union[Aria, TestBot]',
+                 alpha: Union[discord.Member, TestMember],
+                 beta: Union[discord.Member, TestMember],
+                 channel: Union[discord.TextChannel, TestChannel],
+                 send_callable: Callable = _print,
                  ) -> None:
         self.bot = bot
         self.alpha = alpha
