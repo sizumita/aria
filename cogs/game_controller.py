@@ -38,11 +38,11 @@ class Game(commands.Cog):
             await confirm_msg.add_reaction(reaction_emoji)
 
         def check(check_reaction: discord.Reaction, member: discord.Member) -> bool:
-            if not check_reaction.message == confirm_msg:
+            if check_reaction.message.id != confirm_msg.id:
                 return False
-            if not str(check_reaction.emoji) in REACTIONS:
+            if str(check_reaction.emoji) not in REACTIONS:
                 return False
-            if not member == target_member:
+            if member != target_member:
                 return False
             return True
 
