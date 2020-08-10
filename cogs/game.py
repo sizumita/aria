@@ -1,11 +1,8 @@
 import discord
 from discord.ext import commands
-<<<<<<< HEAD
 from lib.game import DiscordGame
 import asyncio
 from typing import Any
-=======
->>>>>>> 7d532051e4c8e9709047e79c16b70847e7e38796
 import textwrap
 
 REACTION_YES = "\U0001f44d"
