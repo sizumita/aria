@@ -47,7 +47,7 @@ class Game:
         self.beta_mp = 100
         self.ready_to_raise = False
         self.send_callable = send_callable
-        self.battle_finish_flag = Event(loop=self.bot.loop)
+        self.battle_finish_flag = Event()
 
     async def send(self, *args, **kwargs) -> None:  # type: ignore
         if iscoroutinefunction(self.send_callable):
