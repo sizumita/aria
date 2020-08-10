@@ -26,7 +26,7 @@ def _calc_damage(my_spell: Optional[Spell], enemy_spell: Optional[Spell]) -> int
 
 class Game:
     def __init__(self,
-                 bot: Aria,
+                 bot: 'Aria',
                  alpha: discord.Member,
                  beta: discord.Member,
                  channel: discord.TextChannel,
