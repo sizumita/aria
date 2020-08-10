@@ -17,7 +17,7 @@ class Game(commands.Cog):
 
     @commands.command()
     @commands.cooldown(1, 30)
-    async def apply(self, ctx: commands.Context, target_user: discord.User):
+    async def apply(self, ctx: commands.Context, target_user: discord.User) -> None:
         author_data = await self.db.get_user(ctx.author.id)
         if author_data is None:
             await ctx.send("あなたはユーザー登録されていません。")
@@ -59,7 +59,7 @@ class Game(commands.Cog):
         await game.start()
 
     @apply.error
-    async def apply_error(self, ctx, err) -> None:
+    async def apply_error(self, ctx: commands.Context, err: commands.CommandInvokeError) -> None:
         if isinstance(err, commands.CommandOnCooldown):
             await ctx.send("再申し込みするには30秒間のクールダウンが必要です。")
         elif isinstance(err, commands.MissingRequiredArgument):
@@ -68,5 +68,5 @@ class Game(commands.Cog):
             await self.bot.on_command_error(ctx, err)
 
 
-def setup(bot) -> None:
+def setup(bot: Any) -> None:
     bot.add_cog(Game(bot))
