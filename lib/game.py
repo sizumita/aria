@@ -94,12 +94,12 @@ class Game:
 
         return spell
 
-    async def raise_spell(self) -> None:
+    async def raise_spell(self, wait_time: int = 5) -> None:
         if self.finish:
             return
 
         self.ready_to_raise = True
-        await sleep(5)
+        await sleep(wait_time)
 
         alpha_to_beta_damage = _calc_damage(self.alpha_spell, self.beta_spell)
         beta_to_alpha_damage = _calc_damage(self.beta_spell, self.alpha_spell)
