@@ -4,6 +4,7 @@ from lib.spell import Spell
 from lib.test_class import TestBot, TestMember, TestChannel
 from asyncio import Task, Event, sleep, iscoroutinefunction
 import datetime
+import random
 
 if TYPE_CHECKING:
     from bot import Aria # noqa
@@ -95,6 +96,55 @@ class Game:
 
         return spell
 
+    async def win(self, winner: Union[discord.Member, TestMember], loser: Union[discord.Member, TestMember]):
+        await self.send(f'{winner.mention} の勝利!')
+        winner_db_user = await self.bot.db.get_user(winner.id)
+        loser_db_user = await self.bot.db.get_user(loser.id)
+        hp_or_mp = random.choice([0, 1])  # 0=hp 1=mp
+
+        def get_num(_user):
+            return _user.hp if not hp_or_mp else _user.mp
+
+        diff = (winner_db_user.hp + winner_db_user.mp) / (loser_db_user.hp + loser_db_user.mp)
+        # hp
+        if diff <= 0.5:
+            # めっちゃ勝った
+            get_ = int(get_num(loser_db_user) * 0.15 * (random.random() + 0.5))
+            lost_ = int(get_num(loser_db_user) * 0.15)
+        elif diff <= 0.6:
+            # 結構勝った
+            get_ = int(get_num(loser_db_user) * 0.12 * (random.random() + 0.5))
+            lost_ = int(get_num(loser_db_user) * 0.12)
+        elif diff <= 0.7:
+            # まあまあ勝った
+            get_ = int(get_num(loser_db_user) * 0.1 * (random.random() + 0.5))
+            lost_ = int(get_num(loser_db_user) * 0.1)
+        elif diff <= 0.8:
+            # ちょい勝った
+            get_ = int(get_num(loser_db_user) * 0.07 * (random.random() + 0.5))
+            lost_ = int(get_num(loser_db_user) * 0.07)
+        elif diff <= 0.9:
+            # ほんとちょびっと勝った
+            get_ = int(get_num(loser_db_user) * 0.06 * (random.random() + 0.5))
+            lost_ = int(get_num(loser_db_user) * 0.06)
+        else:
+            # 同じくらい
+            get_ = int(get_num(loser_db_user) * 0.05 * (random.random() + 0.5))
+            lost_ = int(get_num(loser_db_user) * 0.05)
+
+        if not hp_or_mp:
+            await self.bot.db.update_user(winner.id, winner_db_user.hp + get_, winner_db_user.mp)
+            await self.bot.db.update_user(loser.id, loser_db_user.hp - lost_, loser_db_user.mp)
+
+            await self.send(f'{winner.mention}, HP: {winner_db_user.hp} -> {winner_db_user.hp + get_}')
+            await self.send(f'{loser.mention}, HP: {loser_db_user.hp} -> {loser_db_user.hp - lost_}')
+        else:
+            await self.bot.db.update_user(winner.id, winner_db_user.hp, winner_db_user.mp + get_)
+            await self.bot.db.update_user(loser.id, loser_db_user.hp, loser_db_user.mp - lost_)
+
+            await self.send(f'{winner.mention}, MP: {winner_db_user.mp} -> {winner_db_user.mp + get_}')
+            await self.send(f'{loser.mention}, MP: {loser_db_user.mp} -> {loser_db_user.mp - lost_}')
+
     async def raise_spell(self, wait_time: int = 5) -> None:
         if self.finish:
             return
@@ -117,12 +167,12 @@ class Game:
             self.game_finish_flag.set()
 
         elif self.alpha_hp <= 0:
-            await self.send(f'{self.beta.mention} の勝ち！')
+            await self.win(self.beta, self.alpha)
             self.finish = True
             self.game_finish_flag.set()
 
         elif self.beta_hp <= 0:
-            await self.send(f'{self.alpha.mention} の勝ち！')
+            await self.win(self.alpha, self.beta)
             self.finish = True
             self.game_finish_flag.set()
 
