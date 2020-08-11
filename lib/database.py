@@ -1,5 +1,5 @@
 from typing import NamedTuple
-from typing import Union, Any
+from typing import Union, Any, List, Tuple
 import asyncpg
 import os
 
@@ -43,6 +43,15 @@ class Database:
 
         target = list(data[0])
         return User(target[0], target[1], target[2])
+
+    async def get_user_rankings(self) -> List[Tuple[User, int]]:
+        conn = self.conn or await self.setup()
+        users_data = await conn.fetch('SELECT *, RANK() OVER(ORDER BY (hp + mp) DESC) AS rank FROM users LIMIT 10')
+        return [(User(user_data[0], user_data[1], user_data[2]), user_data[3]) for user_data in users_data]
+
+    async def get_user_ranking(self, id: int) -> int:
+        conn = self.conn or await self.setup()
+        return await conn.fetchval('SELECT RANK() OVER(ORDER BY (hp + mp) DESC) AS rank FROM users WHERE user_id=$1', id)
 
     async def create_user(self, user_id: int) -> Union[None, User]:
         conn = self.conn or await self.setup()
