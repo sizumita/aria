@@ -48,7 +48,7 @@ class ManageCog(commands.Cog):
 
         if not discord.utils.find(lambda u: u[0].id == ctx.author.id, users_ranking):
             if rank := await self.db.get_user_ranking(ctx.author.id):
-                ranking_message += f"自分: {rank} 位"
+                ranking_message += f"自分: {rank}位"
 
         await ctx.send(ranking_message + "```")
 
