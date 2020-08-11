@@ -40,7 +40,7 @@ class ManageCog(commands.Cog):
     @commands.command()
     async def ranking(self, ctx: commands.Context) -> None:
         users_ranking = await self.db.get_user_rankings()
-        ranking_message = "```"
+        ranking_message = "```\n"
 
         for user_ranking in users_ranking:
             user_data = self.bot.get_user(user_ranking[0].id)
