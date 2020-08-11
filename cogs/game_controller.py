@@ -2,8 +2,11 @@ import discord
 from discord.ext import commands
 from lib.game import DiscordGame
 import asyncio
-from typing import Any
+from typing import TYPE_CHECKING, Dict, List
 import textwrap
+
+if TYPE_CHECKING:
+    from bot import Aria # noqa
 
 REACTION_YES = "\U0001f44d"
 REACTION_NO = "\U0001f44e"
@@ -11,11 +14,11 @@ REACTIONS = [REACTION_YES, REACTION_NO]
 
 
 class Game(commands.Cog):
-    def __init__(self, bot: Any) -> None:
+    def __init__(self, bot: 'Aria') -> None:
         self.bot = bot
         self.db = self.bot.db
-        self.games = {}
-        self.game_members = []
+        self.games: Dict[int, DiscordGame] = {}
+        self.game_members: List[int] = []
 
     @commands.command()
     @commands.cooldown(1, 30)
@@ -93,5 +96,5 @@ class Game(commands.Cog):
             await self.bot.on_command_error(ctx, err)
 
 
-def setup(bot: Any) -> None:
+def setup(bot: 'Aria') -> None:
     bot.add_cog(Game(bot))
