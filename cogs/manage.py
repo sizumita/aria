@@ -1,7 +1,8 @@
-from discord.ext import commands
 import textwrap
 from typing import Any
+
 import discord
+from discord.ext import commands
 
 
 class ManageCog(commands.Cog):
@@ -35,6 +36,21 @@ class ManageCog(commands.Cog):
         """
         await ctx.send(textwrap.dedent(msg_text))
         return
+
+    @commands.command()
+    async def ranking(self, ctx: commands.Context) -> None:
+        users_ranking = await self.db.get_user_rankings()
+        ranking_message = "```\n"
+
+        for user_ranking in users_ranking:
+            user_data = self.bot.get_user(user_ranking[0].id)
+            ranking_message += f"{user_ranking[1]}位: {user_data.display_name}\n"
+
+        if not discord.utils.find(lambda u: u[0].id == ctx.author.id, users_ranking):
+            if rank := await self.db.get_user_ranking(ctx.author.id):
+                ranking_message += f"自分: {rank}位"
+
+        await ctx.send(ranking_message + "```")
 
 
 def setup(bot: Any) -> None:
