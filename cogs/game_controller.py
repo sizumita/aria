@@ -5,8 +5,8 @@ import asyncio
 from typing import Any
 import textwrap
 
-REACTION_YES = "\U0001f44d"
-REACTION_NO = "\U0001f44e"
+REACTION_YES = "\U0001f1f4"
+REACTION_NO = "\U0001f1fd"
 REACTIONS = [REACTION_YES, REACTION_NO]
 
 
@@ -30,8 +30,8 @@ class Game(commands.Cog):
         msg_text = f"""\
         {target_member.mention}
         {ctx.author.mention} に対決を申し込まれました。
-        受ける場合は :+1:
-        拒否する場合は :-1:
+        受ける場合は :regional_indicator_o:
+        拒否する場合は :regional_indicator_x:
         """
         confirm_msg: discord.Message = await ctx.send(textwrap.dedent(msg_text))
         for reaction_emoji in REACTIONS:
