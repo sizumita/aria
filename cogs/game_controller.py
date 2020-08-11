@@ -14,10 +14,22 @@ class Game(commands.Cog):
     def __init__(self, bot: Any) -> None:
         self.bot = bot
         self.db = self.bot.db
+        self.games = {}
+        self.game_members = []
 
     @commands.command()
     @commands.cooldown(1, 30)
     async def apply(self, ctx: commands.Context, target_member: discord.Member) -> None:
+        if ctx.channel.id in self.games.keys():
+            await ctx.send('このチャンネルではすでにゲームが開始しています。')
+            return
+        if ctx.author.id in self.game_members:
+            await ctx.send('あなたはすでにゲームを開始しています。')
+            return
+        if target_member.id in self.game_members:
+            await ctx.send('あなたが指定したメンバーはすでにゲームに参加しています。')
+            return
+
         author_data = await self.db.get_user(ctx.author.id)
         if author_data is None:
             await ctx.send("あなたはユーザー登録されていません。")
@@ -59,7 +71,17 @@ class Game(commands.Cog):
 
         await ctx.send("対戦が受けられました。ゲームを開始しています...")
         game = DiscordGame(self.bot, ctx.author, target_member, ctx.channel, ctx.send)
+
+        # ゲーム開始
+        self.games[ctx.channel.id] = game
+        self.game_members.append(ctx.author.id)
+        self.game_members.append(target_member.id)
         await game.start()
+
+        # ゲーム終了
+        del self.games[ctx.channel.id]
+        self.game_members.remove(ctx.author.id)
+        self.game_members.remove(target_member.id)
 
     @apply.error
     async def apply_error(self, ctx: commands.Context, err: commands.CommandInvokeError) -> None:

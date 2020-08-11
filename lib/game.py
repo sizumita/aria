@@ -53,6 +53,7 @@ class Game:
         self.ready_to_raise = False
         self.send_callable = send_callable
         self.battle_finish_flag = Event()
+        self.game_finish_flag = Event()
 
     async def send(self, *args, **kwargs) -> None:  # type: ignore
         if iscoroutinefunction(self.send_callable):
@@ -113,12 +114,18 @@ class Game:
         if self.alpha_hp <= 0 and self.beta_hp <= 0:
             await self.send('相打ち！両者HPが0になったため、相打ちとなります。')
             self.finish = True
+            self.game_finish_flag.set()
+
         elif self.alpha_hp <= 0:
             await self.send(f'{self.beta.mention} の勝ち！')
             self.finish = True
+            self.game_finish_flag.set()
+
         elif self.beta_hp <= 0:
             await self.send(f'{self.alpha.mention} の勝ち！')
             self.finish = True
+            self.game_finish_flag.set()
+
         else:
             await self.send(
                 f'{self.alpha.mention}\n HP: {self.alpha_hp}\n MP: {self.alpha_mp}',
@@ -142,6 +149,7 @@ class Game:
                 self.alpha_mp = 0
                 return False
             return True
+
         else:
             self.beta_mp -= mp
             if self.beta_mp < 0:
@@ -155,6 +163,7 @@ class Game:
             message = await self.wait_for('message', check=check, timeout=60)
             if message.content != 'aria command':
                 continue
+
             await self.send('魔法の発動を開始します。')
             message = await self.wait_for('message', check=check, timeout=60)
 
@@ -190,8 +199,14 @@ class Game:
         self.beta_mp = beta_db_user.mp
 
         await self.send('ゲームスタート！')
-        self.bot.loop.create_task(self.loop(self.alpha_check, 'alpha'))
-        self.bot.loop.create_task(self.loop(self.beta_check, 'beta'))
+        tasks = [self.bot.loop.create_task(self.loop(self.alpha_check, 'alpha')),
+                 self.bot.loop.create_task(self.loop(self.beta_check, 'beta'))]
+
+        for task in tasks:
+            if not task.done():
+                task.cancel()
+
+        await self.game_finish_flag.wait()
 
 
 class DiscordGame(Game):
