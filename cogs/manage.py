@@ -44,7 +44,7 @@ class ManageCog(commands.Cog):
 
         for user_ranking in users_ranking:
             user_data = self.bot.get_user(user_ranking[0].id)
-            ranking_message += f"{user_ranking[1]}: {user_data.display_name}\n"
+            ranking_message += f"{user_ranking[1]}位: {user_data.display_name}\n"
 
         if not discord.utils.find(lambda u: u[0].id == ctx.author.id, users_ranking):
             if rank := await self.db.get_user_ranking(ctx.author.id):
