@@ -202,11 +202,11 @@ class Game:
         tasks = [self.bot.loop.create_task(self.loop(self.alpha_check, 'alpha')),
                  self.bot.loop.create_task(self.loop(self.beta_check, 'beta'))]
 
+        await self.game_finish_flag.wait()
+
         for task in tasks:
             if not task.done():
                 task.cancel()
-
-        await self.game_finish_flag.wait()
 
 
 class DiscordGame(Game):
