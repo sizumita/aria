@@ -3,6 +3,7 @@ from typing import Callable, Optional, NamedTuple, TYPE_CHECKING, Union
 from lib.spell import Spell
 from lib.test_class import TestBot, TestMember, TestChannel
 from asyncio import Task, Event, sleep, iscoroutinefunction
+from lib.database import User
 import datetime
 import random
 
@@ -96,13 +97,13 @@ class Game:
 
         return spell
 
-    async def win(self, winner: Union[discord.Member, TestMember], loser: Union[discord.Member, TestMember]):
+    async def win(self, winner: Union[discord.Member, TestMember], loser: Union[discord.Member, TestMember]) -> None:
         await self.send(f'{winner.mention} の勝利!')
         winner_db_user = await self.bot.db.get_user(winner.id)
         loser_db_user = await self.bot.db.get_user(loser.id)
         hp_or_mp = random.choice([0, 1])  # 0=hp 1=mp
 
-        def get_num(_user):
+        def get_num(_user: User) -> int:
             return _user.hp if not hp_or_mp else _user.mp
 
         diff = (winner_db_user.hp + winner_db_user.mp) / (loser_db_user.hp + loser_db_user.mp)
