@@ -14,7 +14,7 @@ class Aria(commands.Bot):
         status = discord.Game("Aria - War of incantation")
         await self.change_presence(activity=status)
 
-    async def on_command_error(self, context, exception):
+    async def on_command_error(self, context: commands.Context, exception: Exception) -> None:
         if isinstance(exception, commands.CommandNotFound):
             return
 
