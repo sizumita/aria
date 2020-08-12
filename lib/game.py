@@ -48,6 +48,8 @@ class Game:
         self.beta_spell: Optional[Spell] = None
         self.alpha_loop: Optional[Task] = None
         self.beta_loop: Optional[Task] = None
+        self.alpha_db_user: Optional[User] = None
+        self.beta_db_user: Optional[User] = None
         self.alpha_hp = 100
         self.beta_hp = 100
         self.alpha_mp = 100
@@ -232,6 +234,17 @@ class Game:
                 continue
             await self.raise_spell(5 - spell.burst)
 
+    async def auto_heal_loop(self):
+        while not self.finish:
+            self.alpha_mp += (self.alpha_db_user.mp // 50)
+            self.beta_mp += (self.beta_db_user.mp // 50)
+
+            if self.alpha_db_user.mp < self.alpha_mp:
+                self.alpha_mp = self.alpha_db_user.mp
+            if self.beta_db_user.mp < self.beta_mp:
+                self.beta_mp = self.beta_db_user.mp
+            await sleep(10)
+
     async def start(self) -> None:
         alpha_db_user = await self.bot.db.get_user(self.alpha.id)
         beta_db_user = await self.bot.db.get_user(self.beta.id)
@@ -239,6 +252,8 @@ class Game:
         self.alpha_mp = alpha_db_user.mp
         self.beta_hp = beta_db_user.hp
         self.beta_mp = beta_db_user.mp
+        self.alpha_db_user = alpha_db_user
+        self.beta_db_user = beta_db_user
 
         await self.send('ゲームスタート！')
         tasks = [self.bot.loop.create_task(self.loop(self.alpha_check, 'alpha')),
