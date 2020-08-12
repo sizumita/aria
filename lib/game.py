@@ -87,7 +87,7 @@ class Game:
                 return None
 
             mp, message = spell.receive_command(message.content, message.created_at)
-            if mp:
+            if mp is not None:
                 await self.send('システム: ' + message)
                 if not self.use_mp(user, mp):
                     await self.send('システム: MPが枯渇しました。')

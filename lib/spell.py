@@ -8,7 +8,7 @@ feature_compiled = re.compile(r'^change feature (flame|water|earth|light|umbra)$
 copy_compiled = re.compile(r'^copy element ([0-9]+)$')
 generate_compiled = re.compile(r'^generate (flame|water|earth|light|umbra) element$')
 magnification_compiled = re.compile(r'^enhance element (attack|defence)$')
-burst_compiled = re.compile(r'burst element')
+burst_compiled = re.compile(r'^burst element$')
 
 
 class Form(NamedTuple):
@@ -83,7 +83,7 @@ class Spell:
 
         return int(total_defence * self.copy * self.defence_magnification * self.random_spec)
 
-    def receive_command(self, command: str, aria_command_time: datetime.datetime) -> Union[Tuple[int, str], Tuple[bool, None]]:
+    def receive_command(self, command: str, aria_command_time: datetime.datetime) -> Union[Tuple[int, str], Tuple[None, None]]:
         """
         コマンドを受け取り、自分のインスタンス変数を変化させ、Trueを返す
         もしコマンドがおかしかった場合、Falseを返す。
@@ -101,7 +101,7 @@ class Spell:
                 self.last_aria_command_time = aria_command_time
                 return 2, "物質の生成を確認。コマンド入力フェーズへ移行します。"
 
-            return False, None
+            return None, None
 
         if match := form_compiled.match(command):
             self.form = match.groups()[0]
@@ -144,7 +144,7 @@ class Spell:
             return 6, f"バースト完了。バースト値: {self.burst}"
 
         else:
-            return False, None
+            return None, None
 
     def can_aria(self, will_aria_time: datetime.datetime) -> bool:
         """
