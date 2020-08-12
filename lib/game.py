@@ -109,27 +109,27 @@ class Game:
         # hp
         if diff <= 0.5:
             # めっちゃ勝った
-            get_ = int(get_num(loser_db_user) * 0.15 * (random.random() + 0.5))
+            get_ = int(get_num(loser_db_user) * 0.15 * (random.random() + 1))
             lost_ = int(get_num(loser_db_user) * 0.15)
         elif diff <= 0.6:
             # 結構勝った
-            get_ = int(get_num(loser_db_user) * 0.12 * (random.random() + 0.5))
+            get_ = int(get_num(loser_db_user) * 0.12 * (random.random() + 1))
             lost_ = int(get_num(loser_db_user) * 0.12)
         elif diff <= 0.7:
             # まあまあ勝った
-            get_ = int(get_num(loser_db_user) * 0.1 * (random.random() + 0.5))
+            get_ = int(get_num(loser_db_user) * 0.1 * (random.random() + 1))
             lost_ = int(get_num(loser_db_user) * 0.1)
         elif diff <= 0.8:
             # ちょい勝った
-            get_ = int(get_num(loser_db_user) * 0.07 * (random.random() + 0.5))
+            get_ = int(get_num(loser_db_user) * 0.07 * (random.random() + 1))
             lost_ = int(get_num(loser_db_user) * 0.07)
         elif diff <= 0.9:
             # ほんとちょびっと勝った
-            get_ = int(get_num(loser_db_user) * 0.06 * (random.random() + 0.5))
+            get_ = int(get_num(loser_db_user) * 0.06 * (random.random() + 1))
             lost_ = int(get_num(loser_db_user) * 0.06)
         else:
             # 同じくらい
-            get_ = int(get_num(loser_db_user) * 0.05 * (random.random() + 0.5))
+            get_ = int(get_num(loser_db_user) * 0.05 * (random.random() + 1))
             lost_ = int(get_num(loser_db_user) * 0.05)
 
         if not hp_or_mp:
