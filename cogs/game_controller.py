@@ -23,6 +23,12 @@ class Game(commands.Cog):
     @commands.command()
     @commands.cooldown(1, 30)
     async def apply(self, ctx: commands.Context, target_member: discord.Member) -> None:
+        if ctx.author.id == target_member.id:
+            await ctx.send('あなた自身を選ぶことはできません。')
+            return
+        if target_member.bot:
+            await ctx.send('Botを相手に選ぶことはできません。')
+            return
         if ctx.channel.id in self.games.keys():
             await ctx.send('このチャンネルではすでにゲームが開始しています。')
             return
