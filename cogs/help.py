@@ -1,7 +1,6 @@
 from discord.ext import commands
 from typing import TYPE_CHECKING
 import discord
-from os import environ
 
 if TYPE_CHECKING:
     from bot import Aria # noqa
