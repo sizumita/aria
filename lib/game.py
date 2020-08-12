@@ -79,17 +79,18 @@ class Game:
             message = await self.wait_for('message', check=check, timeout=60)
             if message.content == 'execute':
                 if not self.use_mp(user, 5):
-                    await self.send('MPが枯渇しました。')
+                    await self.send('システム: MPが枯渇しました。')
                     return None
                 break
 
             if not spell.can_aria(message.created_at):
                 return None
 
-            if mp := spell.receive_command(message.content, message.created_at):
-                await self.send('コマンドを受け取りました。')
+            mp, message = spell.receive_command(message.content, message.created_at)
+            if mp:
+                await self.send('システム: ' + message)
                 if not self.use_mp(user, mp):
-                    await self.send('MPが枯渇しました。')
+                    await self.send('システム: MPが枯渇しました。')
                     return None
                 continue
 
@@ -215,23 +216,13 @@ class Game:
             if message.content != 'aria command':
                 continue
 
-            await self.send('魔法の発動を開始します。')
-            message = await self.wait_for('message', check=check, timeout=60)
+            await self.send('システム: 魔法の発動開始を確認。物質生成フェーズへ移行します。')
 
-            if message.content != 'generate element':
-                await self.send('魔法の発動に失敗しました。')
-                continue
-
-            if not self.use_mp(user):
-                await self.send('MPが枯渇しました。')
-                return
-
-            await self.send('物質生成が完了しました。')
             spell = await self.recv_command(check, user)
             if spell is None:
-                await self.send('魔法の発動に失敗しました。')
+                await self.send('システム: 魔法の発動に失敗しました。')
                 continue
-            await self.send('魔法の発動を開始します。')
+            await self.send('システム: 魔法の発動を開始します。')
             if user == 'alpha':
                 self.alpha_spell = spell
             else:

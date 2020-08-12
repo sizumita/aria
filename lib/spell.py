@@ -1,10 +1,11 @@
 from __future__ import annotations
 import re
 import datetime
-from typing import NamedTuple, Union
+from typing import NamedTuple, Union, Tuple
 form_compiled = re.compile(r'^change element (sword|spear|bow|wall|rod)$')
 feature_compiled = re.compile(r'^change feature (flame|water|earth|light|umbra)$')
 copy_compiled = re.compile(r'^copy ([0-9]+)$')
+generate_compiled = re.compile(r'^generate (flame|water|earth|light|umbra) element$')
 
 
 class Form(NamedTuple):
@@ -73,36 +74,48 @@ class Spell:
 
         return int(total_defence) * self.copy  # 少数になる可能性もあるため
 
-    def receive_command(self, command: str, aria_command_time: datetime.datetime) -> Union[int, bool]:
+    def receive_command(self, command: str, aria_command_time: datetime.datetime) -> Union[Tuple[int, str], Tuple[bool, None]]:
         """
         コマンドを受け取り、自分のインスタンス変数を変化させ、Trueを返す
         もしコマンドがおかしかった場合、Falseを返す。
         :param command: コマンドの文
         :param aria_command_time: コマンドを実行した時間
-        :return: 消費するmp or False
+        :return: 消費するmp or False, message
         """
+        if self.last_aria_command_time is None:
+            if match := generate_compiled.match(command):
+                self.feature = match.groups()[0]
+                self.last_aria_command_time = aria_command_time
+                return 4, "物質の生成を確認。コマンド入力フェーズへ移行します。"
+
+            if command == "generate element":
+                self.last_aria_command_time = aria_command_time
+                return 2, "物質の生成を確認。コマンド入力フェーズへ移行します。"
+
+            return False, None
+
         if match := form_compiled.match(command):
             self.form = match.groups()[0]
             self.last_aria_command_time = aria_command_time
 
-            return 2
+            return 2, "物質の形状変化を確認。"
 
         elif match := feature_compiled.match(command):
             self.feature = match.groups()[0]
             self.last_aria_command_time = aria_command_time
 
-            return 3
+            return 3, "物質の属性変化を確認。"
 
         elif match := copy_compiled.match(command):
             self.copy = int(match.groups()[0])
             self.last_aria_command_time = aria_command_time
 
             if self.form == 'bow':
-                return 5 * self.copy
-            return int(2.7 ** self.copy)
+                return 5 * self.copy, "物質の複製を確認。"
+            return int(2.9 ** self.copy), "物質の複製を確認。"
 
         else:
-            return False
+            return False, None
 
     def can_aria(self, will_aria_time: datetime.datetime) -> bool:
         """
