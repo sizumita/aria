@@ -6,8 +6,10 @@ import discord
 
 class Aria(commands.Bot):
     def __init__(self) -> None:
-        super().__init__(command_prefix=commands.when_mentioned_or(
-            environ.get('PREFIX', 'aria ')))
+        super().__init__(
+            command_prefix=commands.when_mentioned_or(environ.get('PREFIX', 'aria ')),
+            help_command=None,
+        )
         self.db = Database(self)
 
     async def on_ready(self) -> None:
