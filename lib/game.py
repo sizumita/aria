@@ -48,6 +48,8 @@ class Game:
         self.beta_spell: Optional[Spell] = None
         self.alpha_loop: Optional[Task] = None
         self.beta_loop: Optional[Task] = None
+        self.alpha_db_user: Optional[User] = None
+        self.beta_db_user: Optional[User] = None
         self.alpha_hp = 100
         self.beta_hp = 100
         self.alpha_mp = 100
@@ -77,19 +79,20 @@ class Game:
         spell = Spell()
         while not self.bot.is_closed() and not self.finish:
             message = await self.wait_for('message', check=check, timeout=60)
-            if message.content == 'execute':
+            if message.content in ['execute', 'discharge']:
                 if not self.use_mp(user, 5):
-                    await self.send('MPが枯渇しました。')
+                    await self.send('システム: MPが枯渇しました。')
                     return None
                 break
 
             if not spell.can_aria(message.created_at):
                 return None
 
-            if mp := spell.receive_command(message.content, message.created_at):
-                await self.send('コマンドを受け取りました。')
+            mp, msg = spell.receive_command(message.content, message.created_at)
+            if mp is not None:
+                await self.send('システム: ' + msg)
                 if not self.use_mp(user, mp):
-                    await self.send('MPが枯渇しました。')
+                    await self.send('システム: MPが枯渇しました。')
                     return None
                 continue
 
@@ -215,23 +218,13 @@ class Game:
             if message.content != 'aria command':
                 continue
 
-            await self.send('魔法の発動を開始します。')
-            message = await self.wait_for('message', check=check, timeout=60)
+            await self.send('システム: 魔法の発動開始を確認。物質生成フェーズへ移行します。')
 
-            if message.content != 'generate element':
-                await self.send('魔法の発動に失敗しました。')
-                continue
-
-            if not self.use_mp(user):
-                await self.send('MPが枯渇しました。')
-                return
-
-            await self.send('物質生成が完了しました。')
             spell = await self.recv_command(check, user)
             if spell is None:
-                await self.send('魔法の発動に失敗しました。')
+                await self.send('システム: 魔法の発動に失敗しました。')
                 continue
-            await self.send('魔法の発動を開始します。')
+            await self.send('システム: 魔法の発動を開始します。')
             if user == 'alpha':
                 self.alpha_spell = spell
             else:
@@ -239,7 +232,22 @@ class Game:
             if self.ready_to_raise:
                 await self.battle_finish_flag.wait()
                 continue
-            await self.raise_spell()
+            await self.raise_spell(5 - spell.burst)
+
+    async def auto_heal_loop(self) -> None:
+        while not self.finish:
+            if self.alpha_db_user is None:
+                continue
+            if self.beta_db_user is None:
+                continue
+            self.alpha_mp += (self.alpha_db_user.mp // 50)
+            self.beta_mp += (self.beta_db_user.mp // 50)
+
+            if self.alpha_db_user.mp < self.alpha_mp:
+                self.alpha_mp = self.alpha_db_user.mp
+            if self.beta_db_user.mp < self.beta_mp:
+                self.beta_mp = self.beta_db_user.mp
+            await sleep(10)
 
     async def start(self) -> None:
         alpha_db_user = await self.bot.db.get_user(self.alpha.id)
@@ -248,10 +256,13 @@ class Game:
         self.alpha_mp = alpha_db_user.mp
         self.beta_hp = beta_db_user.hp
         self.beta_mp = beta_db_user.mp
+        self.alpha_db_user = alpha_db_user
+        self.beta_db_user = beta_db_user
 
         await self.send('ゲームスタート！')
         tasks = [self.bot.loop.create_task(self.loop(self.alpha_check, 'alpha')),
-                 self.bot.loop.create_task(self.loop(self.beta_check, 'beta'))]
+                 self.bot.loop.create_task(self.loop(self.beta_check, 'beta')),
+                 self.bot.loop.create_task(self.auto_heal_loop())]
 
         await self.game_finish_flag.wait()
 
