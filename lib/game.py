@@ -77,7 +77,7 @@ class Game:
         spell = Spell()
         while not self.bot.is_closed() and not self.finish:
             message = await self.wait_for('message', check=check, timeout=60)
-            if message.content == 'execute':
+            if message.content in ['execute', 'discharge']:
                 if not self.use_mp(user, 5):
                     await self.send('システム: MPが枯渇しました。')
                     return None
