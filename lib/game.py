@@ -230,7 +230,7 @@ class Game:
             if self.ready_to_raise:
                 await self.battle_finish_flag.wait()
                 continue
-            await self.raise_spell()
+            await self.raise_spell(5 - spell.burst)
 
     async def start(self) -> None:
         alpha_db_user = await self.bot.db.get_user(self.alpha.id)

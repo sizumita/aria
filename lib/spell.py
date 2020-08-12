@@ -8,6 +8,7 @@ feature_compiled = re.compile(r'^change feature (flame|water|earth|light|umbra)$
 copy_compiled = re.compile(r'^copy element ([0-9]+)$')
 generate_compiled = re.compile(r'^generate (flame|water|earth|light|umbra) element$')
 magnification_compiled = re.compile(r'^enhance element (attack|defence)$')
+burst_compiled = re.compile(r'burst element')
 
 
 class Form(NamedTuple):
@@ -52,6 +53,7 @@ class Spell:
         self.attack_magnification = 1
         self.defence_magnification = 1
         self.random_spec = random.random() + 0.5
+        self.burst = 0
         if self.random_spec >= 1:
             self.random_spec = 1
 
@@ -131,7 +133,15 @@ class Spell:
             self.defence_magnification += round(random.random(), 2)
             self.last_aria_command_time = aria_command_time
 
-            return 5, f"防御力のエンハンス完了。{self.attack_magnification}倍に変化。"
+            return 5, f"防御力のエンハンス完了。{self.attack_magnification}倍に変化。"\
+
+        elif burst_compiled.match(command):
+            if self.burst == 5:
+                return 0, f"これ以上のバーストは不可能です。"
+
+            self.burst += 1
+
+            return 6, f"バースト完了。バースト値: {self.burst}"
 
         else:
             return False, None
