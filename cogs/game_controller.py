@@ -21,7 +21,7 @@ class Game(commands.Cog):
         self.game_members: List[int] = []
 
     @commands.command()
-    @commands.cooldown(1, 30)
+    @commands.cooldown(1, 30, commands.BucketType.user)
     async def apply(self, ctx: commands.Context, target_member: discord.Member) -> None:
         if ctx.author.id == target_member.id:
             await ctx.send('あなた自身を選ぶことはできません。')
