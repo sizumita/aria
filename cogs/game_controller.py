@@ -28,7 +28,7 @@ class Game(commands.Cog):
             return
         if target_member.bot:
             await ctx.send('Botを相手に選ぶことはできません。')
-            return 
+            return
         if ctx.channel.id in self.games.keys():
             await ctx.send('このチャンネルではすでにゲームが開始しています。')
             return
