@@ -2,7 +2,7 @@ import discord
 from typing import Callable, Optional, NamedTuple, TYPE_CHECKING, Union
 from lib.spell import Spell
 from lib.test_class import TestBot, TestMember, TestChannel
-from asyncio import Task, Event, sleep, iscoroutinefunction
+from asyncio import Task, Event, sleep, iscoroutinefunction, TimeoutError
 from lib.database import User
 import datetime
 import random
@@ -78,7 +78,10 @@ class Game:
     async def recv_command(self, check: Callable, user: str) -> Optional[Spell]:
         spell = Spell()
         while not self.bot.is_closed() and not self.finish:
-            message = await self.wait_for('message', check=check, timeout=60)
+            try:
+                message = await self.wait_for('message', check=check, timeout=60)
+            except TimeoutError:
+                return None
             if message.content in ['execute', 'discharge']:
                 if not self.use_mp(user, 5):
                     await self.send('システム: MPが枯渇しました。')
@@ -211,10 +214,20 @@ class Game:
                 return False
             return True
 
+    async def force_end_game(self) -> None:
+        await self.send('入力がなかったためゲームを終了します。')
+        self.game_finish_flag.set()
+        self.battle_finish_flag.set()
+        self.finish = True
+
     async def loop(self, check: Callable, user: str) -> None:
 
         while not self.bot.is_closed() and not self.finish:
-            message = await self.wait_for('message', check=check, timeout=60)
+            try:
+                message = await self.wait_for('message', check=check, timeout=60)
+            except TimeoutError:
+                return await self.force_end_game()
+
             if message.content != 'aria command':
                 continue
 
