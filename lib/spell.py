@@ -126,12 +126,12 @@ class Spell:
                 self.attack_magnification += round(random.random(), 2)
                 self.last_aria_command_time = aria_command_time
 
-                return 7, f"攻撃力のエンハンス完了。{self.attack_magnification}倍に変化。"
+                return 5, f"攻撃力のエンハンス完了。{self.attack_magnification}倍に変化。"
 
             self.defence_magnification += round(random.random(), 2)
             self.last_aria_command_time = aria_command_time
 
-            return 7, f"防御力のエンハンス完了。{self.attack_magnification}倍に変化。"
+            return 5, f"防御力のエンハンス完了。{self.attack_magnification}倍に変化。"
 
         else:
             return False, None
