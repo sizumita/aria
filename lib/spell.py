@@ -50,8 +50,8 @@ class Spell:
         self.feature: Union[None, str] = None
         self.copy = 1
         self.last_aria_command_time: Union[None, datetime.datetime] = None
-        self.attack_magnification = 1
-        self.defence_magnification = 1
+        self.attack_magnification = 1.
+        self.defence_magnification = 1.
         self.random_spec = random.random() + 0.5
         self.burst = 0
         if self.random_spec >= 1:

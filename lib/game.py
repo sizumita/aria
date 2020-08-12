@@ -88,9 +88,9 @@ class Game:
             if not spell.can_aria(message.created_at):
                 return None
 
-            mp, message = spell.receive_command(message.content, message.created_at)
+            mp, msg = spell.receive_command(message.content, message.created_at)
             if mp is not None:
-                await self.send('システム: ' + message)
+                await self.send('システム: ' + msg)
                 if not self.use_mp(user, mp):
                     await self.send('システム: MPが枯渇しました。')
                     return None
@@ -234,8 +234,12 @@ class Game:
                 continue
             await self.raise_spell(5 - spell.burst)
 
-    async def auto_heal_loop(self):
+    async def auto_heal_loop(self) -> None:
         while not self.finish:
+            if self.alpha_db_user is None:
+                continue
+            if self.beta_db_user is None:
+                continue
             self.alpha_mp += (self.alpha_db_user.mp // 50)
             self.beta_mp += (self.beta_db_user.mp // 50)
 
@@ -257,7 +261,8 @@ class Game:
 
         await self.send('ゲームスタート！')
         tasks = [self.bot.loop.create_task(self.loop(self.alpha_check, 'alpha')),
-                 self.bot.loop.create_task(self.loop(self.beta_check, 'beta'))]
+                 self.bot.loop.create_task(self.loop(self.beta_check, 'beta')),
+                 self.bot.loop.create_task(self.auto_heal_loop())]
 
         await self.game_finish_flag.wait()
 
