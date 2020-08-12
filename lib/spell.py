@@ -137,7 +137,7 @@ class Spell:
 
         elif burst_compiled.match(command):
             if self.burst == 5:
-                return 0, f"これ以上のバーストは不可能です。"
+                return 0, "これ以上のバーストは不可能です。"
 
             self.burst += 1
 
