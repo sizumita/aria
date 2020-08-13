@@ -2,6 +2,7 @@ from __future__ import annotations
 import re
 import datetime
 import random
+from decimal import Decimal, ROUND_HALF_DOWN
 from typing import NamedTuple, Union, Tuple
 form_compiled = re.compile(r'^change element (sword|spear|bow|wall|rod)$')
 feature_compiled = re.compile(r'^change feature (flame|water|earth|light|umbra)$')
@@ -42,6 +43,10 @@ def _calc_feature(num: Union[int, float], self_spell: Spell, enemy_spell: Spell)
             num *= 0.8
 
     return num
+
+
+def get_float_for_display(num: float) -> Decimal:
+    return Decimal(num).quantize(Decimal("0.01"), rounding=ROUND_HALF_DOWN).normalize()
 
 
 class Spell:
@@ -131,12 +136,12 @@ class Spell:
                 self.attack_magnification += round(random.random(), 2)
                 self.last_aria_command_time = aria_command_time
 
-                return 5, f"攻撃力のエンハンス完了。{self.attack_magnification}倍に変化。"
+                return 5, f"攻撃力のエンハンス完了。{get_float_for_display(self.attack_magnification)}倍に変化。"
 
             self.defence_magnification += round(random.random(), 2)
             self.last_aria_command_time = aria_command_time
 
-            return 5, f"防御力のエンハンス完了。{self.defence_magnification}倍に変化。"\
+            return 5, f"防御力のエンハンス完了。{get_float_for_display(self.defence_magnification)}倍に変化。"
 
         elif burst_compiled.match(command):
             if self.burst == 5:
