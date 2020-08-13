@@ -224,7 +224,7 @@ class Game:
 
         while not self.bot.is_closed() and not self.finish:
             try:
-                message = await self.wait_for('message', check=check, timeout=60)
+                message = await self.wait_for('message', check=check, timeout=1000)
             except TimeoutError:
                 return await self.force_end_game()
 
