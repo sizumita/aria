@@ -53,7 +53,7 @@ class ManageCog(commands.Cog):
                 user_data = await self.bot.db.get_user(ctx.author.id)
                 ranking_message += f"`{rank}位: `{ctx.author.mention}`, HP: {user_data.hp}, MP: {user_data.mp}`"
 
-        await ctx.send(ranking_message)
+        await ctx.send(ranking_message,allowed_mentions=discord.AllowedMentions(user=False))
 
 
 def setup(bot: Any) -> None:
