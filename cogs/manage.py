@@ -46,12 +46,12 @@ class ManageCog(commands.Cog):
             user = self.bot.get_user(user_ranking[0].id)
             user_data = user_ranking[0]
 
-            ranking_message += f"{user_ranking[1]}位: {user.display_name}, HP: {user_data.hp}, MP: {user_data.mp}\n"
+            ranking_message += f"{user_ranking[1]}位: {user}, HP: {user_data.hp}, MP: {user_data.mp}\n"
 
         if not discord.utils.find(lambda u: u[0].id == ctx.author.id, users_ranking):
             if rank := await self.db.get_user_ranking(ctx.author.id):
                 user_data = await self.bot.db.get_user(ctx.author.id)
-                ranking_message += f"\n{rank}位: {ctx.author.display_name}, HP: {user_data.hp}, MP: {user_data.mp}"
+                ranking_message += f"\n{rank}位: {ctx.author}, HP: {user_data.hp}, MP: {user_data.mp}"
 
         await ctx.send(ranking_message + "```")
 
