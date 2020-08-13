@@ -29,7 +29,7 @@ class Help(commands.Cog):
         )
         embed.add_field(
             name='リンク一覧',
-            value='[公式wiki](https://github.com/sizumita/aria/wiki/トップページ)\n'
+            value='[公式wiki](https://github.com/sizumita/aria/wiki/)\n'
                   '[招待URL](https://discord.com/api/oauth2/authorize?client_id='
                   '741807660894257284&permissions=388160&scope=bot)\n'
                   '不明な点があったら[こいつのtwitter](https://twitter.com/sizumita)にDMしてくれな。',
