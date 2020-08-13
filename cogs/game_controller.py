@@ -1,6 +1,6 @@
 import discord
 from discord.ext import commands
-from lib.game import DiscordGame
+from lib.game import DiscordGame, TestMode
 import asyncio
 from typing import TYPE_CHECKING, Dict, List
 import textwrap
@@ -100,6 +100,18 @@ class Game(commands.Cog):
             await ctx.send("引数に対戦申し込みしたいユーザーのメンションを入れて実行してください。")
         else:
             await self.bot.on_command_error(ctx, err)
+
+    @commands.command()
+    async def test(self, ctx: commands.Context) -> None:
+        game = TestMode(self.bot, ctx.author, ctx.author, ctx.channel, ctx.send)
+        self.games[ctx.channel.id] = game
+        self.game_members.append(ctx.author.id)
+
+        await game.start()
+
+        # ゲーム終了
+        del self.games[ctx.channel.id]
+        self.game_members.remove(ctx.author.id)
 
 
 def setup(bot: 'Aria') -> None:
