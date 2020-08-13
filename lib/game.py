@@ -134,10 +134,24 @@ class Game:
             # ほんとちょびっと勝った
             get_ = int(get_num(loser_db_user) * 0.06 * (random.random() + 1))
             lost_ = int(get_num(loser_db_user) * 0.06)
-        else:
+        elif diff <= 1.1:
             # 同じくらい
             get_ = int(get_num(loser_db_user) * 0.05 * (random.random() + 1))
             lost_ = int(get_num(loser_db_user) * 0.05)
+        elif diff <= 1.2:
+            # ちょっと弱い
+            get_ = int(get_num(loser_db_user) * 0.03)
+            lost_ = int(get_num(loser_db_user) * 0.02)
+        elif diff <= 1.4:
+            # 結構弱い
+            get_ = int(get_num(loser_db_user) * 0.02)
+            lost_ = int(get_num(loser_db_user) * 0.02)
+        elif diff <= 1.8:
+            get_ = int(get_num(loser_db_user) * 0.01)
+            lost_ = int(get_num(loser_db_user) * 0.01)
+        else:
+            get_ = 0
+            lost_ = 0
 
         if not hp_or_mp:
             await self.bot.db.update_user(winner.id, winner_db_user.hp + get_, winner_db_user.mp)
