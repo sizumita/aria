@@ -50,6 +50,7 @@ class Spell:
         self.feature: Union[None, str] = None
         self.copy = 1
         self.last_aria_command_time: Union[None, datetime.datetime] = None
+        self.before_generate = True
         self.attack_magnification = 1.
         self.defence_magnification = 1.
         self.random_spec = random.random() + 0.5
@@ -91,13 +92,15 @@ class Spell:
         :param aria_command_time: コマンドを実行した時間
         :return: 消費するmp or False, message
         """
-        if self.last_aria_command_time is None:
+        if self.before_generate:
             if match := generate_compiled.match(command):
+                self.before_generate = False
                 self.feature = match.groups()[0]
                 self.last_aria_command_time = aria_command_time
                 return 4, "物質の生成を確認。コマンド入力フェーズへ移行します。"
 
             if command == "generate element":
+                self.before_generate = False
                 self.last_aria_command_time = aria_command_time
                 return 2, "物質の生成を確認。コマンド入力フェーズへ移行します。"
 
