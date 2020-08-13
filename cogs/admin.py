@@ -30,5 +30,5 @@ class Admin(commands.Cog):
         await self.bot.close()
 
 
-def setup(bot: 'Aria'):
+def setup(bot: 'Aria') -> None:
     bot.add_cog(Admin(bot))
