@@ -131,12 +131,12 @@ class Spell:
                 self.attack_magnification += round(random.random(), 2)
                 self.last_aria_command_time = aria_command_time
 
-                return 5, f"攻撃力のエンハンス完了。{self.attack_magnification}倍に変化。"
+                return 5, f"攻撃力のエンハンス完了。{round(self.attack_magnification, 2)}倍に変化。"
 
             self.defence_magnification += round(random.random(), 2)
             self.last_aria_command_time = aria_command_time
 
-            return 5, f"防御力のエンハンス完了。{self.defence_magnification}倍に変化。"\
+            return 5, f"防御力のエンハンス完了。{round(self.defence_magnification, 2)}倍に変化。"\
 
         elif burst_compiled.match(command):
             if self.burst == 5:
