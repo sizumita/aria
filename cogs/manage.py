@@ -51,7 +51,7 @@ class ManageCog(commands.Cog):
         if not discord.utils.find(lambda u: u[0].id == ctx.author.id, users_ranking):
             if rank := await self.db.get_user_ranking(ctx.author.id):
                 user_data = await self.bot.db.get_user(ctx.author.id)
-                ranking_message += f"`{rank}位: {ctx.author.display_name}(`{ctx.author.mention}`), HP: {user_data.hp}, MP: {user_data.mp}`"
+                ranking_message += f"\n`{rank}位: {ctx.author.display_name}(`{ctx.author.mention}`), HP: {user_data.hp}, MP: {user_data.mp}`"
 
         await ctx.send(ranking_message, allowed_mentions=discord.AllowedMentions(users=False))
 
