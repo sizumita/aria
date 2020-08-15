@@ -302,3 +302,28 @@ class DiscordGame(Game):
     async def wait_for(self, *args, **kwargs) -> Message:  # type: ignore
         message = await self.bot.wait_for(*args, **kwargs)
         return Message(message.content, message.created_at)
+
+
+class TestMode(DiscordGame):
+    async def win(self, winner: Union[discord.Member, TestMember], loser: Union[discord.Member, TestMember]) -> None:
+        await self.send('システム: テストモード終了。')
+
+    async def start(self) -> None:
+        alpha_db_user = await self.bot.db.get_user(self.alpha.id)
+        beta_db_user = await self.bot.db.get_user(self.beta.id)
+        self.alpha_hp = alpha_db_user.hp
+        self.alpha_mp = alpha_db_user.mp
+        self.beta_hp = beta_db_user.hp
+        self.beta_mp = beta_db_user.mp
+        self.alpha_db_user = alpha_db_user
+        self.beta_db_user = beta_db_user
+
+        await self.send('ゲームスタート！')
+        tasks = [self.bot.loop.create_task(self.loop(self.alpha_check, 'alpha')),
+                 self.bot.loop.create_task(self.auto_heal_loop())]
+
+        await self.game_finish_flag.wait()
+
+        for task in tasks:
+            if not task.done():
+                task.cancel()
