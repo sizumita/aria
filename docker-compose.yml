@@ -4,8 +4,8 @@ services:
     image: postgres
     environment:
       env_file: postgres.env
-    ports:
-      - 5431:5431
+    expose:
+      - "5432"
     volumes:
       - pgsql-aria-data:/var/lib/postgresql/data
       - ./postgres/init:/docker-entrypoint-initdb.d
