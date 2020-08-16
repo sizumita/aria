@@ -1,15 +1,14 @@
-version: '3'
+version: "3"
 services:
   postgres:
     image: postgres
-    environment:
-      env_file: postgres.env
+    env_file: postgres.env
     ports:
       - "5431:5431"
     volumes:
       - pgsql-aria-data:/var/lib/postgresql/data
       - ./postgres/init:/docker-entrypoint-initdb.d
-    container_name: 'mydb'
+    container_name: "mydb"
     command: -p 5431
   main:
     environment:
@@ -19,7 +18,7 @@ services:
     build:
       context: .
       dockerfile: ./docker/python/Dockerfile
-    container_name: 'main'
+    container_name: "main"
 
 volumes:
   pgsql-aria-data:
