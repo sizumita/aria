@@ -2,8 +2,7 @@ version: "3"
 services:
   postgres:
     image: postgres
-    environment:
-      env_file: postgres.env
+    env_file: postgres.env
     ports:
       - "5431:5431"
     volumes:
