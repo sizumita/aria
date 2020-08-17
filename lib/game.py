@@ -307,6 +307,8 @@ class DiscordGame(Game):
 class TestMode(DiscordGame):
     async def win(self, winner: Union[discord.Member, TestMember], loser: Union[discord.Member, TestMember]) -> None:
         await self.send('システム: テストモード終了。')
+        self.finish = True
+        self.game_finish_flag.set()
 
     async def start(self) -> None:
         alpha_db_user = await self.bot.db.get_user(self.alpha.id)
