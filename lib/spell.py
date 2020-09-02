@@ -7,7 +7,7 @@ form_compiled = re.compile(r'^change element (sword|spear|bow|wall|rod)$')
 feature_compiled = re.compile(r'^change feature (flame|water|earth|light|umbra)$')
 copy_compiled = re.compile(r'^copy element ([0-9]+)$')
 generate_compiled = re.compile(r'^generate (flame|water|earth|light|umbra) element$')
-magnification_compiled = re.compile(r'^enhance element (attack|defence)$')
+magnification_compiled = re.compile(r'^enhance element (attack|defence|defense)$')
 burst_compiled = re.compile(r'^burst element$')
 
 
