@@ -56,5 +56,5 @@ class ManageCog(commands.Cog):
         await ctx.send(ranking_message + "```")
 
 
-def setup(bot: Any) -> None:
-    bot.add_cog(ManageCog(bot))
+async def setup(bot: Any) -> None:
+    await bot.add_cog(ManageCog(bot))

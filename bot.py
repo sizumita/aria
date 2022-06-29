@@ -6,9 +6,12 @@ import discord
 
 class Aria(commands.Bot):
     def __init__(self) -> None:
+        intents = discord.Intents.default()
+        intents.message_content = True
         super().__init__(
             command_prefix=commands.when_mentioned_or(environ.get('PREFIX', 'aria ')),
             help_command=None,
+            intents=intents
         )
         self.db = Database(self)
 
