@@ -15,6 +15,16 @@ class Aria(commands.Bot):
         )
         self.db = Database(self)
 
+    async def setup_hook(self):
+        extensions = [
+            "cogs.manage",
+            "cogs.game_controller",
+            "cogs.help",
+            "cogs.admin",
+        ]
+        for extension in extensions:
+            await self.load_extension(extension)
+
     async def on_ready(self) -> None:
         status = discord.Game("Aria - War of incantation")
         await self.change_presence(activity=status)
