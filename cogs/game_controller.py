@@ -114,5 +114,5 @@ class Game(commands.Cog):
         self.game_members.remove(ctx.author.id)
 
 
-def setup(bot: 'Aria') -> None:
-    bot.add_cog(Game(bot))
+async def setup(bot: 'Aria') -> None:
+    await bot.add_cog(Game(bot))

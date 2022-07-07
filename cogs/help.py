@@ -43,5 +43,5 @@ class Help(commands.Cog):
         await ctx.send(embed=embed)
 
 
-def setup(bot: 'Aria') -> None:
-    bot.add_cog(Help(bot))
+async def setup(bot: 'Aria') -> None:
+    await bot.add_cog(Help(bot))
