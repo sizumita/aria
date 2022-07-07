@@ -15,7 +15,7 @@ class Aria(commands.Bot):
         )
         self.db = Database(self)
 
-    async def setup_hook(self):
+    async def setup_hook(self) -> None:
         extensions = [
             "cogs.manage",
             "cogs.game_controller",
